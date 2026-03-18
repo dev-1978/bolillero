@@ -1,1 +1,279 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Bolillero ULTRA FINAL</title>
+
+<style>
+body{
+  background: radial-gradient(circle,#020617,#000);
+  color:white;
+  text-align:center;
+  font-family:Arial;
+}
+
+/* INPUTS */
+input{
+  padding:8px;
+  width:80px;
+  margin:5px;
+  border-radius:6px;
+  border:none;
+}
+button{
+  padding:8px 15px;
+  margin:5px;
+  border:none;
+  border-radius:8px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+}
+
+.lista{
+  font-size:12px;
+  opacity:0.7;
+}
+
+/* BOLILLERO */
+.bolillero{
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,0.3);
+  margin:20px auto;
+  position:relative;
+  overflow:hidden;
+  background: radial-gradient(circle, rgba(255,255,255,0.05), transparent);
+}
+
+/* VIDRIO */
+.bolillero::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent);
+}
+
+/* PUERTA */
+.puerta{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:60px;
+  height:20px;
+  background:#999;
+  border-radius:10px 10px 0 0;
+}
+
+/* BOLAS */
+.bolita{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  position:absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  font-weight:bold;
+  color:black;
+  transition:all 0.5s;
+}
+
+.roja{background:#ef4444;}
+.azul{background:#3b82f6;}
+.verde{background:#22c55e;}
+.amarilla{background:#facc15;}
+
+/* CAIDA */
+@keyframes caer {
+  0% { top:200px; }
+  50% { top:320px; transform:scale(1.3); }
+  80% { top:300px; }
+  100% { top:310px; }
+}
+
+/* RESULTADOS */
+.resultados{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:20px;
+}
+
+.resultado{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:white;
+  color:black;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  font-size:12px;
+  box-shadow:0 0 15px rgba(255,255,255,0.5);
+}
+
+.ganador{
+  animation: glow 0.6s;
+}
+
+@keyframes glow{
+  0%{box-shadow:0 0 0px yellow;}
+  50%{box-shadow:0 0 25px yellow;}
+  100%{box-shadow:0 0 0px yellow;}
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎰 Bolillero ULTRA</h2>
+
+<!-- INPUT RANGO -->
+<input type="number" id="desde" placeholder="Desde">
+<input type="number" id="hasta" placeholder="Hasta">
+<button onclick="guardarRango()">Guardar</button>
+
+<p class="lista" id="listaNumeros"></p>
+
+<div class="bolillero" id="bolillero">
+  <div class="puerta"></div>
+</div>
+
+<button onclick="sortear()">Sortear</button>
+
+<div class="resultados" id="resultados"></div>
+
+<audio id="sonido" src="https://www.soundjay.com/mechanical/sounds/clunk-1.mp3"></audio>
+
+<script>
+
+// 🔥 RESULTADOS FIJOS
+let numerosFijos = [123,456,789];
+
+// 📦 LOCAL STORAGE
+let lista = JSON.parse(localStorage.getItem("bolas")) || [];
+
+// mostrar rango
+function renderLista(){
+  if(lista.length){
+    document.getElementById("listaNumeros").innerText =
+      "🎯 Rango: " + lista[0] + " al " + lista[lista.length-1] +
+      " (" + lista.length + " bolas)";
+  }else{
+    document.getElementById("listaNumeros").innerText = "(sin rango)";
+  }
+}
+renderLista();
+
+// guardar rango
+function guardarRango(){
+
+  let desde = Number(document.getElementById("desde").value);
+  let hasta = Number(document.getElementById("hasta").value);
+
+  if(!desde || !hasta || desde > hasta) return;
+
+  lista = [];
+
+  for(let i=desde; i<=hasta; i++){
+    lista.push(i);
+  }
+
+  localStorage.setItem("bolas", JSON.stringify(lista));
+  renderLista();
+}
+
+const bolillero = document.getElementById("bolillero");
+const sonido = document.getElementById("sonido");
+
+let colores = ["roja","azul","verde","amarilla"];
+let bolas = [];
+
+// crear bolas
+for(let i=0;i<25;i++){
+  let d=document.createElement("div");
+  d.className="bolita "+colores[Math.floor(Math.random()*colores.length)];
+
+  d.style.top=Math.random()*200+"px";
+  d.style.left=Math.random()*200+"px";
+
+  bolillero.appendChild(d);
+  bolas.push(d);
+}
+
+// movimiento
+function mover(){
+  bolas.forEach(b=>{
+    b.style.top=Math.random()*200+"px";
+    b.style.left=Math.random()*200+"px";
+
+    if(lista.length){
+      b.innerText = lista[Math.floor(Math.random()*lista.length)];
+    }else{
+      b.innerText = Math.floor(Math.random()*500);
+    }
+  });
+}
+
+// sacar bola
+function sacar(numero, texto, delay){
+
+  setTimeout(()=>{
+
+    let c=0;
+
+    let anim=setInterval(()=>{
+      mover();
+      c++;
+
+      if(c>15){
+        clearInterval(anim);
+
+        let bola = bolas.shift();
+
+        bola.innerText = numero;
+
+        bola.style.left = "50%";
+        bola.style.transform = "translateX(-50%)";
+
+        setTimeout(()=>{
+          bola.style.animation = "caer 1s forwards";
+        },200);
+
+        sonido.currentTime = 0;
+        sonido.play();
+
+        let div=document.createElement("div");
+        div.className="resultado ganador";
+        div.innerHTML = texto + "<br>" + numero;
+
+        document.getElementById("resultados").appendChild(div);
+      }
+
+    },70);
+
+  },delay);
+}
+
+// sorteo
+function sortear(){
+
+  document.getElementById("resultados").innerHTML="";
+
+  sacar(numerosFijos[0],"🥇 1°",0);
+  sacar(numerosFijos[1],"🥈 2°",2000);
+  sacar(numerosFijos[2],"🥉 3°",4000);
+}
+
+</script>
+
+</body>
+</html>
