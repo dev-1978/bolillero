@@ -72,6 +72,7 @@ button{
   font-size:11px;
   font-weight:bold;
   color:black;
+  transition: opacity 0.3s; /* Para el desvanecimiento */
 }
 
 .roja{background:#ff4dc4;}
@@ -84,8 +85,10 @@ button{
 .bola3{transform:scale(1.3);}
 
 @keyframes caer{
-  0%{top:200px;}
-  100%{top:225px;}
+  0%{top:200px; opacity: 1;}
+  /* Caída y desvanecimiento final */
+  90%{top:225px; opacity: 1;}
+  100%{top:235px; opacity: 0;}
 }
 
 .resultados{
@@ -177,7 +180,10 @@ let colores=["roja","azul","verde","amarilla"];
 let bolas=[];
 
 function resetearBolillero(){
-  bolas.forEach(b=>b.remove());
+  // Limpiar DOM de bolas viejas
+  const bolasViejas = bolillero.querySelectorAll('.bolita');
+  bolasViejas.forEach(b => b.remove());
+  
   bolas=[];
 
   for(let i=0;i<20;i++){
@@ -194,6 +200,9 @@ function mover(){
   if(!girando) return;
 
   bolas.forEach(b=>{
+    // Solo mover las que no están en proceso de sorteo (sin posicion absoluta fija)
+    if(b.style.left.includes('%')) return; 
+
     b.style.top=Math.random()*180+"px";
     b.style.left=Math.random()*180+"px";
   });
@@ -216,7 +225,7 @@ function sacar(num,texto,delay,orden){
         puerta.classList.add("puerta-abierta");
 
         let b=bolas.shift();
-        if(!b) return; // Seguridad por si no quedan bolas visuales
+        if(!b) return; 
         
         b.innerText=num;
 
@@ -229,6 +238,7 @@ function sacar(num,texto,delay,orden){
         b.style.transform="translateX(-50%)";
 
         setTimeout(()=>{
+          // La animación 'caer' ahora incluye desvanecimiento (opacity: 0)
           b.style.animation="caer 0.6s forwards";
         },200);
 
@@ -236,12 +246,17 @@ function sacar(num,texto,delay,orden){
           puerta.classList.remove("puerta-abierta");
         },600);
 
+        // ✅ resultado después de caer
         setTimeout(()=>{
           let r=document.createElement("div");
           r.className="resultado";
           r.innerHTML=texto+"<br>"+num;
           resultados.appendChild(r);
-        },800);
+          
+          // ✅ ELIMINAR LA BOLA DEL BOLILLERO
+          // Esperamos a que termine la animación de caída y desvanecimiento
+          b.remove(); 
+        },1000); // Un poco más de tiempo para asegurar que se vea caer
       }
     },70);
   },delay);
@@ -256,12 +271,11 @@ function sortear(){
   iniciarMovimiento();
   resultados.innerHTML="";
 
-  // Sorteo cada 3000ms (3 segundos)
   for(let i=0;i<numerosFijos.length;i++){
+    // Mantenemos los 3 segundos (3000ms) entre bolas
     sacar(numerosFijos[i],(i+1)+"°",i*3000,i+1);
   }
 
-  // Se detiene después de que sale la última bola (3s * cantidad + margen)
   setTimeout(()=>{
     girando=false;
     clearInterval(intervalo);
