@@ -46,7 +46,7 @@ button{
   border:3px solid #ff4dc4;
   margin:20px auto;
   position:relative;
-  overflow:hidden;
+  /* Eliminado overflow:hidden para que se vean las bolas al caer */
 }
 
 /* puerta */
@@ -60,6 +60,7 @@ button{
   transform:translateX(-50%);
   border-radius:0 0 10px 10px;
   transition:0.3s;
+  z-index: 10;
 }
 
 .puerta-abierta{
@@ -90,16 +91,17 @@ button{
 .bola3{transform:scale(1.3);}
 
 @keyframes caer{
-  0%{top:200px;}
-  50%{top:300px;}
-  70%{top:270px;}
-  100%{top:290px;}
+  0%{top:200px; opacity: 1;}
+  50%{top:310px;}
+  70%{top:290px;}
+  100%{top:305px; opacity: 1;}
 }
 
 .resultados{
   display:flex;
   justify-content:center;
   gap:10px;
+  margin-top: 60px; /* Espacio para que las bolas no tapen los cuadros */
 }
 
 .resultado{
@@ -112,6 +114,7 @@ button{
   align-items:center;
   justify-content:center;
   flex-direction:column;
+  box-shadow: 0 0 15px rgba(255, 77, 196, 0.5);
 }
 
 #mensajeClau{
@@ -198,6 +201,9 @@ function resetearTodo(){
   resultados.innerHTML="";
   girando=false;
   clearInterval(intervalo);
+  
+  // Limpiar bolas que quedaron descansando
+  document.querySelectorAll('.bolita-descanso').forEach(b => b.remove());
 }
 
 let colores=["roja","azul","verde","amarilla"];
@@ -254,6 +260,7 @@ function sacar(num,texto,delay,orden){
 
         let b=bolas.shift();
         b.innerText=num;
+        b.classList.add("bolita-descanso"); // Clase para identificar que ya salió
 
         if(orden==1)b.classList.add("bola1");
         if(orden==2)b.classList.add("bola2");
@@ -269,7 +276,7 @@ function sacar(num,texto,delay,orden){
           sonido.play();
         },200);
 
-        setTimeout(()=>b.remove(),1500);
+        // Se quitó el setTimeout que hacía b.remove() para que descansen abajo
 
         setTimeout(()=>{
           puerta.classList.remove("puerta-abierta");
@@ -289,6 +296,9 @@ function sortear(){
     alert("Primero guardá un rango 😏");
     return;
   }
+  
+  // Limpiar bolas de sorteos anteriores que quedaron descansando
+  document.querySelectorAll('.bolita-descanso').forEach(b => b.remove());
 
   iniciarMovimiento();
   resultados.innerHTML="";
@@ -308,7 +318,7 @@ function pedirClave(){
     mensajeClau.style.display="block";
     setTimeout(()=>mensajeClau.style.display="none",3000);
 
-    crearPanel(); // 💥 ahora sí funciona
+    crearPanel();
   }
 }
 
@@ -335,6 +345,7 @@ function crearPanel(){
   panel.style.padding="15px";
   panel.style.borderRadius="10px";
   panel.style.border="2px solid #ff4dc4";
+  panel.style.zIndex="100";
 
   document.body.appendChild(panel);
 }
