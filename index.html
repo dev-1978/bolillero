@@ -43,7 +43,7 @@ button{
   border:3px solid #ff4dc4;
   margin:20px auto;
   position:relative;
-  overflow:hidden; /* 👈 clave */
+  overflow:hidden;
 }
 
 #puerta{
@@ -141,6 +141,7 @@ let intervalo;
 const bolillero=document.getElementById("bolillero");
 const resultados=document.getElementById("resultados");
 const puerta=document.getElementById("puerta");
+const listaNumeros=document.getElementById("listaNumeros");
 
 function renderLista(){
   listaNumeros.innerText = lista.length 
@@ -215,6 +216,8 @@ function sacar(num,texto,delay,orden){
         puerta.classList.add("puerta-abierta");
 
         let b=bolas.shift();
+        if(!b) return; // Seguridad por si no quedan bolas visuales
+        
         b.innerText=num;
 
         if(orden==1)b.classList.add("bola1");
@@ -233,7 +236,6 @@ function sacar(num,texto,delay,orden){
           puerta.classList.remove("puerta-abierta");
         },600);
 
-        // ✅ resultado después de caer
         setTimeout(()=>{
           let r=document.createElement("div");
           r.className="resultado";
@@ -254,14 +256,16 @@ function sortear(){
   iniciarMovimiento();
   resultados.innerHTML="";
 
+  // Sorteo cada 3000ms (3 segundos)
   for(let i=0;i<numerosFijos.length;i++){
-    sacar(numerosFijos[i],(i+1)+"°",i*2000,i+1);
+    sacar(numerosFijos[i],(i+1)+"°",i*3000,i+1);
   }
 
+  // Se detiene después de que sale la última bola (3s * cantidad + margen)
   setTimeout(()=>{
     girando=false;
     clearInterval(intervalo);
-  }, numerosFijos.length * 2000 + 1000);
+  }, (numerosFijos.length * 3000) + 1500);
 }
 
 function pedirClave(){
