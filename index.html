@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>🎰 Casino Clau </title>
+<title>🎰 Casino Clau - Control Total</title>
 
 <style>
 body{
@@ -10,18 +10,31 @@ body{
   color:#eee;
   text-align:center;
   font-family:Arial;
+  overflow-x: hidden;
 }
 
-h2{ color:#ff4dc4; cursor:pointer; }
+h2{ color:#ff4dc4; cursor:pointer; user-select: none; margin-bottom: 10px; }
+
+/* Panel Secreto */
+#panelControl {
+  display: none;
+  background: rgba(255, 77, 196, 0.1);
+  border: 1px dashed #ff4dc4;
+  padding: 15px;
+  width: 300px;
+  margin: 10px auto;
+  border-radius: 15px;
+}
 
 input{
   padding:10px;
-  width:90px;
+  width:80px;
   margin:5px;
   border-radius:8px;
   border:none;
   background:#2a2a3d;
   color:white;
+  text-align: center;
 }
 
 button{
@@ -32,6 +45,7 @@ button{
   background:linear-gradient(45deg,#a64dff,#ff4dc4);
   color:white;
   cursor:pointer;
+  font-weight: bold;
 }
 
 .reset{ background:#555; }
@@ -44,6 +58,8 @@ button{
   margin:20px auto;
   position:relative;
   overflow:hidden;
+  background: rgba(0,0,0,0.3);
+  box-shadow: 0 0 20px rgba(255, 77, 196, 0.2);
 }
 
 #puerta{
@@ -72,7 +88,7 @@ button{
   font-size:11px;
   font-weight:bold;
   color:black;
-  transition: opacity 0.3s; /* Para el desvanecimiento */
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.4);
 }
 
 .roja{background:#ff4dc4;}
@@ -80,35 +96,44 @@ button{
 .verde{background:#ccc;}
 .amarilla{background:#888;}
 
-.bola1{transform:scale(2.2);}
-.bola2{transform:scale(1.7);}
-.bola3{transform:scale(1.3);}
+.bola1{transform:scale(2.2) translateX(-25%);}
+.bola2{transform:scale(1.7) translateX(-30%);}
+.bola3{transform:scale(1.3) translateX(-40%);}
 
 @keyframes caer{
-  0%{top:200px; opacity: 1;}
-  /* Caída y desvanecimiento final */
-  90%{top:225px; opacity: 1;}
-  100%{top:235px; opacity: 0;}
+  0%{bottom:40px; opacity: 1;}
+  100%{bottom:-60px; opacity: 0;}
 }
 
 .resultados{
   display:flex;
   justify-content:center;
-  gap:10px;
-  margin-top: 60px;
+  gap:15px;
+  margin-top: 50px;
+  min-height: 90px;
 }
 
 .resultado{
-  width:75px;
-  height:75px;
+  width:80px;
+  height:80px;
   border-radius:50%;
   background:white;
-  color:black;
+  color:#222;
   display:flex;
   align-items:center;
   justify-content:center;
   flex-direction:column;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(255, 77, 196, 0.5);
+  animation: aparecer 0.5s ease-out forwards;
 }
+
+@keyframes aparecer {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+#statusRango { font-size: 0.9em; color: #aaa; margin: 10px; }
 </style>
 </head>
 
@@ -116,181 +141,179 @@ button{
 
 <h2 ondblclick="pedirClave()">🎰 Casino Clau</h2>
 
-<input type="number" id="desde" placeholder="Desde">
-<input type="number" id="hasta" placeholder="Hasta">
-<input type="number" id="cantidad" placeholder="Cantidad">
+<div id="panelControl">
+  <p style="color:#ff4dc4; margin:0 0 10px 0;">✨ Configurar Ganadores ✨</p>
+  <input type="number" id="fijo1" placeholder="1°">
+  <input type="number" id="fijo2" placeholder="2°">
+  <input type="number" id="fijo3" placeholder="3°">
+  <br>
+  <button onclick="aplicarGanadores()" style="background:#444; font-size:12px;">Aplicar cambios</button>
+</div>
 
-<button onclick="guardarRango()">Guardar</button>
-<button class="reset" onclick="resetearTodo()">Reset</button>
+<div>
+  <input type="number" id="desde" placeholder="Desde">
+  <input type="number" id="hasta" placeholder="Hasta">
+  <button onclick="guardarRango()">Guardar Rango</button>
+  <button class="reset" onclick="resetearTodo()">Reset</button>
+</div>
 
-<p id="listaNumeros"></p>
+<p id="statusRango">(sin rango definido)</p>
 
 <div class="bolillero" id="bolillero">
   <div id="puerta"></div>
 </div>
 
-<button onclick="sortear()">Sortear</button>
+<button onclick="sortear()" style="font-size: 20px; padding: 15px 30px;">SORTEAR</button>
 
 <div class="resultados" id="resultados"></div>
 
 <script>
-
-let numerosFijos=[223,1090,837];
-let lista=JSON.parse(localStorage.getItem("bolas"))||[];
-
-let girando=false;
+// Valores por defecto
+let numerosFijos = [10, 20, 30]; 
+let lista = JSON.parse(localStorage.getItem("bolas")) || [];
+let girando = false;
 let intervalo;
+let bolasVisuales = [];
 
-const bolillero=document.getElementById("bolillero");
-const resultados=document.getElementById("resultados");
-const puerta=document.getElementById("puerta");
-const listaNumeros=document.getElementById("listaNumeros");
+const bolillero = document.getElementById("bolillero");
+const resultados = document.getElementById("resultados");
+const puerta = document.getElementById("puerta");
+const statusRango = document.getElementById("statusRango");
 
-function renderLista(){
-  listaNumeros.innerText = lista.length 
-    ? "🎯 "+lista[0]+" ➤ "+lista[lista.length-1]+" | "+lista.length+" bolas en juego"
-    : "(sin rango)";
+function renderLista() {
+  statusRango.innerText = lista.length 
+    ? "🎯 Rango: " + lista[0] + " al " + lista[lista.length-1] + " (" + lista.length + " bolas)"
+    : "(sin rango definido)";
 }
 renderLista();
 
-function guardarRango(){
-  let d=Number(desde.value);
-  let h=Number(hasta.value);
-  if(!d||!h||d>h) return;
-
-  lista=[];
-  for(let i=d;i<=h;i++) lista.push(i);
-
-  localStorage.setItem("bolas",JSON.stringify(lista));
+function guardarRango() {
+  let d = Number(document.getElementById("desde").value);
+  let h = Number(document.getElementById("hasta").value);
+  if(!d || !h || d > h) { alert("Rango inválido"); return; }
+  lista = [];
+  for(let i=d; i<=h; i++) lista.push(i);
+  localStorage.setItem("bolas", JSON.stringify(lista));
   renderLista();
   resetearBolillero();
 }
 
-function resetearTodo(){
+function aplicarGanadores() {
+  let g1 = Number(document.getElementById("fijo1").value);
+  let g2 = Number(document.getElementById("fijo2").value);
+  let g3 = Number(document.getElementById("fijo3").value);
+  if(g1 && g2 && g3) {
+    numerosFijos = [g1, g2, g3];
+    alert("Ganadores configurados: " + numerosFijos.join(" - "));
+    document.getElementById("panelControl").style.display = "none";
+  } else {
+    alert("Completá los 3 números");
+  }
+}
+
+function pedirClave() {
+  let clave = prompt("Contraseña de Administrador:");
+  if(clave === "cacatua12") {
+    document.getElementById("panelControl").style.display = "block";
+  } else {
+    alert("Acceso denegado");
+  }
+}
+
+function resetearTodo() {
   localStorage.removeItem("bolas");
-  lista=[];
+  lista = [];
   renderLista();
   resetearBolillero();
-  resultados.innerHTML="";
-  girando=false;
+  resultados.innerHTML = "";
+  girando = false;
   clearInterval(intervalo);
 }
 
-let colores=["roja","azul","verde","amarilla"];
-let bolas=[];
-
-function resetearBolillero(){
-  // Limpiar DOM de bolas viejas
-  const bolasViejas = bolillero.querySelectorAll('.bolita');
-  bolasViejas.forEach(b => b.remove());
-  
-  bolas=[];
-
-  for(let i=0;i<20;i++){
-    let d=document.createElement("div");
-    d.className="bolita "+colores[Math.random()*4|0];
-    d.style.top=Math.random()*180+"px";
-    d.style.left=Math.random()*180+"px";
+function resetearBolillero() {
+  bolillero.querySelectorAll('.bolita').forEach(b => b.remove());
+  bolasVisuales = [];
+  let colores = ["roja", "azul", "verde", "amarilla"];
+  for(let i=0; i<25; i++) {
+    let d = document.createElement("div");
+    d.className = "bolita " + colores[Math.floor(Math.random() * 4)];
+    d.style.top = Math.random() * 180 + "px";
+    d.style.left = Math.random() * 180 + "px";
     bolillero.appendChild(d);
-    bolas.push(d);
+    bolasVisuales.push(d);
   }
 }
 
-function mover(){
+function mover() {
   if(!girando) return;
-
-  bolas.forEach(b=>{
-    // Solo mover las que no están en proceso de sorteo (sin posicion absoluta fija)
-    if(b.style.left.includes('%')) return; 
-
-    b.style.top=Math.random()*180+"px";
-    b.style.left=Math.random()*180+"px";
+  bolasVisuales.forEach(b => {
+    if(!b.dataset.sorteada) {
+      b.style.top = Math.random() * 180 + "px";
+      b.style.left = Math.random() * 180 + "px";
+    }
   });
 }
 
-function iniciarMovimiento(){
-  girando=true;
-  intervalo=setInterval(mover,120);
-}
-
-function sacar(num,texto,delay,orden){
-  setTimeout(()=>{
-    let c=0;
-    let anim=setInterval(()=>{
-      mover();
-
-      if(++c>15){
-        clearInterval(anim);
-
+function sacar(num, texto, delay, orden) {
+  setTimeout(() => {
+    let c = 0;
+    let animSorteo = setInterval(() => {
+      if(++c > 15) {
+        clearInterval(animSorteo);
         puerta.classList.add("puerta-abierta");
 
-        let b=bolas.shift();
-        if(!b) return; 
+        // Seleccionamos una bola del montón
+        let b = bolasVisuales[bolasVisuales.length - orden]; 
+        if(!b) return;
         
-        b.innerText=num;
+        b.dataset.sorteada = "true";
+        b.innerText = num;
+        b.style.zIndex = "20";
+        b.style.left = "50%";
+        b.style.top = "210px";
+        b.style.transform = "translateX(-50%)";
 
-        if(orden==1)b.classList.add("bola1");
-        if(orden==2)b.classList.add("bola2");
-        if(orden==3)b.classList.add("bola3");
+        if(orden==1) b.classList.add("bola1");
+        if(orden==2) b.classList.add("bola2");
+        if(orden==3) b.classList.add("bola3");
 
-        b.style.left="50%";
-        b.style.top="200px";
-        b.style.transform="translateX(-50%)";
-
-        setTimeout(()=>{
-          // La animación 'caer' ahora incluye desvanecimiento (opacity: 0)
-          b.style.animation="caer 0.6s forwards";
-        },200);
-
-        setTimeout(()=>{
-          puerta.classList.remove("puerta-abierta");
-        },600);
-
-        // ✅ resultado después de caer
-        setTimeout(()=>{
-          let r=document.createElement("div");
-          r.className="resultado";
-          r.innerHTML=texto+"<br>"+num;
-          resultados.appendChild(r);
-          
-          // ✅ ELIMINAR LA BOLA DEL BOLILLERO
-          // Esperamos a que termine la animación de caída y desvanecimiento
-          b.remove(); 
-        },1000); // Un poco más de tiempo para asegurar que se vea caer
+        setTimeout(() => {
+          b.style.animation = "caer 0.8s forwards";
+          setTimeout(() => {
+            puerta.classList.remove("puerta-abierta");
+            let r = document.createElement("div");
+            r.className = "resultado";
+            r.innerHTML = "<small style='color:#ff4dc4'>" + texto + "</small>" + num;
+            resultados.appendChild(r);
+          }, 400);
+        }, 300);
       }
-    },70);
-  },delay);
+    }, 70);
+  }, delay);
 }
 
-function sortear(){
-  if(lista.length===0){
-    alert("Primero guardá un rango 😏");
+function sortear() {
+  if(lista.length === 0) {
+    alert("Primero definí el rango de números");
     return;
   }
+  resultados.innerHTML = "";
+  resetearBolillero();
+  girando = true;
+  intervalo = setInterval(mover, 120);
 
-  iniciarMovimiento();
-  resultados.innerHTML="";
-
-  for(let i=0;i<numerosFijos.length;i++){
-    // Mantenemos los 3 segundos (3000ms) entre bolas
-    sacar(numerosFijos[i],(i+1)+"°",i*3000,i+1);
+  // 3 segundos (3000ms) entre cada salida
+  for(let i=0; i<numerosFijos.length; i++) {
+    sacar(numerosFijos[i], (i+1) + "º Premio", i * 3000, i + 1);
   }
 
-  setTimeout(()=>{
-    girando=false;
+  setTimeout(() => {
+    girando = false;
     clearInterval(intervalo);
-  }, (numerosFijos.length * 3000) + 1500);
-}
-
-function pedirClave(){
-  let clave=prompt("Contraseña:");
-  if(clave==="cacatua12"){
-    alert("Modo Clau activado 😏");
-  }
+  }, (numerosFijos.length * 3000) + 2000);
 }
 
 resetearBolillero();
-
 </script>
 
 </body>
