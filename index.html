@@ -43,6 +43,7 @@ button{
   border:3px solid #ff4dc4;
   margin:20px auto;
   position:relative;
+  overflow:hidden; /* 👈 clave */
 }
 
 #puerta{
@@ -58,9 +59,7 @@ button{
   z-index: 10;
 }
 
-.puerta-abierta{
-  height:5px;
-}
+.puerta-abierta{ height:5px; }
 
 .bolita{
   width:24px;
@@ -86,9 +85,7 @@ button{
 
 @keyframes caer{
   0%{top:200px;}
-  50%{top:310px;}
-  70%{top:290px;}
-  100%{top:305px;}
+  100%{top:225px;}
 }
 
 .resultados{
@@ -108,18 +105,6 @@ button{
   align-items:center;
   justify-content:center;
   flex-direction:column;
-  box-shadow: 0 0 15px rgba(255, 77, 196, 0.5);
-}
-
-#mensajeClau{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#111;
-  padding:10px 20px;
-  border-radius:10px;
-  display:none;
 }
 </style>
 </head>
@@ -145,30 +130,17 @@ button{
 
 <div class="resultados" id="resultados"></div>
 
-<div id="mensajeClau">Bienvenida Clau 😏</div>
-
 <script>
 
 let numerosFijos=[123,456,789];
-let cantidadGanadores=3;
-
 let lista=JSON.parse(localStorage.getItem("bolas"))||[];
+
 let girando=false;
 let intervalo;
 
 const bolillero=document.getElementById("bolillero");
 const resultados=document.getElementById("resultados");
 const puerta=document.getElementById("puerta");
-const mensajeClau=document.getElementById("mensajeClau");
-
-// 🔊 sonidos
-const sonidoCaida = new Audio("https://www.soundjay.com/mechanical/sounds/mechanical-clunk-2.mp3");
-const sonidoExplosion = new Audio("https://www.soundjay.com/explosion/sounds/explosion-01.mp3");
-const sonidoGiro = new Audio("https://www.soundjay.com/machine/sounds/slot-machine-1.mp3");
-
-sonidoGiro.loop = true;
-sonidoExplosion.volume = 0.3;
-sonidoGiro.volume = 0.2;
 
 function renderLista(){
   listaNumeros.innerText = lista.length 
@@ -186,15 +158,11 @@ function guardarRango(){
   for(let i=d;i<=h;i++) lista.push(i);
 
   localStorage.setItem("bolas",JSON.stringify(lista));
-
   renderLista();
   resetearBolillero();
-  iniciarMovimiento();
 }
 
 function resetearTodo(){
-  desde.value="";
-  hasta.value="";
   localStorage.removeItem("bolas");
   lista=[];
   renderLista();
@@ -202,8 +170,6 @@ function resetearTodo(){
   resultados.innerHTML="";
   girando=false;
   clearInterval(intervalo);
-  sonidoGiro.pause();
-  document.querySelectorAll('.bolita-descanso').forEach(b => b.remove());
 }
 
 let colores=["roja","azul","verde","amarilla"];
@@ -213,7 +179,7 @@ function resetearBolillero(){
   bolas.forEach(b=>b.remove());
   bolas=[];
 
-  for(let i=0;i<25;i++){
+  for(let i=0;i<20;i++){
     let d=document.createElement("div");
     d.className="bolita "+colores[Math.random()*4|0];
     d.style.top=Math.random()*180+"px";
@@ -223,38 +189,18 @@ function resetearBolillero(){
   }
 }
 
-function getRandom(){
-  return lista.length
-    ? lista[Math.random()*lista.length|0]
-    : Math.floor(Math.random()*100);
-}
-
 function mover(){
   if(!girando) return;
 
   bolas.forEach(b=>{
     b.style.top=Math.random()*180+"px";
     b.style.left=Math.random()*180+"px";
-    b.innerText=getRandom();
   });
 }
 
 function iniciarMovimiento(){
-  if(girando) return;
   girando=true;
-
-  sonidoGiro.currentTime = 0;
-  sonidoGiro.play();
-
   intervalo=setInterval(mover,120);
-}
-
-function dejarBolasEnElPiso(){
-  bolas.forEach((b)=>{
-    b.style.animation="none";
-    b.style.top = (230 + Math.random()*40) + "px";
-    b.style.left = (Math.random()*200) + "px";
-  });
 }
 
 function sacar(num,texto,delay,orden){
@@ -270,7 +216,6 @@ function sacar(num,texto,delay,orden){
 
         let b=bolas.shift();
         b.innerText=num;
-        b.classList.add("bolita-descanso");
 
         if(orden==1)b.classList.add("bola1");
         if(orden==2)b.classList.add("bola2");
@@ -281,26 +226,20 @@ function sacar(num,texto,delay,orden){
         b.style.transform="translateX(-50%)";
 
         setTimeout(()=>{
-          b.style.animation="caer 0.8s forwards";
-
-          sonidoCaida.currentTime=0;
-          sonidoCaida.play();
-
-          setTimeout(()=>{
-            sonidoExplosion.currentTime=0;
-            sonidoExplosion.play();
-          },150);
-
+          b.style.animation="caer 0.6s forwards";
         },200);
 
         setTimeout(()=>{
           puerta.classList.remove("puerta-abierta");
-        },800);
+        },600);
 
-        let r=document.createElement("div");
-        r.className="resultado";
-        r.innerHTML=texto+"<br>"+num;
-        resultados.appendChild(r);
+        // ✅ resultado después de caer
+        setTimeout(()=>{
+          let r=document.createElement("div");
+          r.className="resultado";
+          r.innerHTML=texto+"<br>"+num;
+          resultados.appendChild(r);
+        },800);
       }
     },70);
   },delay);
@@ -312,77 +251,24 @@ function sortear(){
     return;
   }
 
-  document.querySelectorAll('.bolita-descanso').forEach(b => b.remove());
-
   iniciarMovimiento();
   resultados.innerHTML="";
 
-  cantidadGanadores = numerosFijos.length;
-
-  for(let i=0;i<cantidadGanadores;i++){
+  for(let i=0;i<numerosFijos.length;i++){
     sacar(numerosFijos[i],(i+1)+"°",i*2000,i+1);
   }
 
   setTimeout(()=>{
     girando=false;
     clearInterval(intervalo);
-    dejarBolasEnElPiso();
-
-    sonidoGiro.pause();
-    sonidoGiro.currentTime = 0;
-
-  }, cantidadGanadores * 2000 + 1500);
+  }, numerosFijos.length * 2000 + 1000);
 }
 
 function pedirClave(){
   let clave=prompt("Contraseña:");
-
   if(clave==="cacatua12"){
-    mensajeClau.style.display="block";
-    setTimeout(()=>mensajeClau.style.display="none",3000);
-    crearPanel();
+    alert("Modo Clau activado 😏");
   }
-}
-
-function crearPanel(){
-  if(document.getElementById("panelSecreto")) return;
-
-  let panel=document.createElement("div");
-  panel.id="panelSecreto";
-
-  panel.innerHTML=`
-    <b>Editar premios</b><br><br>
-    <input type="number" id="g1" placeholder="1°">
-    <input type="number" id="g2" placeholder="2°">
-    <input type="number" id="g3" placeholder="3°">
-    <br><br>
-    <button onclick="guardarGanadores()">Guardar</button>
-    <button onclick="this.parentElement.remove()">X</button>
-  `;
-
-  panel.style.position="fixed";
-  panel.style.bottom="20px";
-  panel.style.right="20px";
-  panel.style.background="#1a1a2e";
-  panel.style.padding="15px";
-  panel.style.borderRadius="10px";
-  panel.style.border="2px solid #ff4dc4";
-  panel.style.zIndex="100";
-
-  document.body.appendChild(panel);
-}
-
-function guardarGanadores(){
-  let n1=Number(g1.value);
-  let n2=Number(g2.value);
-  let n3=Number(g3.value);
-
-  if(!n1||!n2||!n3) return;
-
-  numerosFijos=[n1,n2,n3];
-
-  alert("Actualizado 😏");
-  document.getElementById("panelSecreto").remove();
 }
 
 resetearBolillero();
