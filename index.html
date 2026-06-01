@@ -1,320 +1,1452 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>🎰 Casino Clau - Control Total</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎰 Casino Clau - Sorteo de Gala</title>
+  
+  <!-- Tipografías de Prestigio (Serif Clásica y Sans-Serif Limpia) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-body{
-  background:linear-gradient(135deg,#1a1a2e,#2d1b4e,#1a1a2e);
-  color:#eee;
-  text-align:center;
-  font-family:Arial;
-  overflow-x: hidden;
-}
+  <style>
+    :root {
+      --bg-dark: #07080c;
+      --panel-bg: rgba(15, 18, 28, 0.85);
+      --gold-dark: #a67c1e;
+      --gold-light: #f3e5ab;
+      --gold-metallic: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --silver-metallic: linear-gradient(135deg, #d3d3d3, #ffffff, #a9a9a9, #ffffff, #808080);
+      --gold-primary: #d4af37;
+      --border-color: rgba(212, 175, 55, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #8e95a5;
+    }
 
-h2{ color:#ff4dc4; cursor:pointer; user-select: none; margin-bottom: 10px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
 
-/* Panel Secreto */
-#panelControl {
-  display: none;
-  background: rgba(255, 77, 196, 0.1);
-  border: 1px dashed #ff4dc4;
-  padding: 15px;
-  width: 300px;
-  margin: 10px auto;
-  border-radius: 15px;
-}
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 20%, #111526 0%, var(--bg-dark) 85%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 30px 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-input{
-  padding:10px;
-  width:80px;
-  margin:5px;
-  border-radius:8px;
-  border:none;
-  background:#2a2a3d;
-  color:white;
-  text-align: center;
-}
+    /* Cabecera Clásica de Gala */
+    header {
+      text-align: center;
+      margin-bottom: 15px;
+      z-index: 5;
+    }
 
-button{
-  padding:10px 18px;
-  margin:5px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(45deg,#a64dff,#ff4dc4);
-  color:white;
-  cursor:pointer;
-  font-weight: bold;
-}
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      background: var(--gold-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+      cursor: pointer;
+      user-select: none;
+      transition: filter 0.3s;
+    }
 
-.reset{ background:#555; }
+    h1:hover {
+      filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+    }
 
-.bolillero{
-  width:260px;
-  height:260px;
-  border-radius:50%;
-  border:3px solid #ff4dc4;
-  margin:20px auto;
-  position:relative;
-  overflow:hidden;
-  background: rgba(0,0,0,0.3);
-  box-shadow: 0 0 20px rgba(255, 77, 196, 0.2);
-}
+    .subtitle {
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      margin-top: 8px;
+    }
 
-#puerta{
-  width:60px;
-  height:25px;
-  background:#222;
-  position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  border-radius:0 0 10px 10px;
-  transition:0.3s;
-  z-index: 10;
-}
+    /* Layout Panel de Control de Gala */
+    .dashboard {
+      width: 100%;
+      max-width: 1140px;
+      display: grid;
+      grid-template-columns: 280px 1fr 280px;
+      gap: 30px;
+      align-items: center;
+      z-index: 2;
+    }
 
-.puerta-abierta{ height:5px; }
+    /* Paneles de Cuero y Oro */
+    .gala-panel {
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.6),
+        inset 0 0 20px rgba(212, 175, 55, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+    }
 
-.bolita{
-  width:24px;
-  height:24px;
-  border-radius:50%;
-  position:absolute;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  font-weight:bold;
-  color:black;
-  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.4);
-}
+    .panel-header {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+      padding-bottom: 10px;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-.roja{background:#ff4dc4;}
-.azul{background:#a64dff;}
-.verde{background:#ccc;}
-.amarilla{background:#888;}
+    .panel-status {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
 
-.bola1{transform:scale(2.2) translateX(-25%);}
-.bola2{transform:scale(1.7) translateX(-30%);}
-.bola3{transform:scale(1.3) translateX(-40%);}
+    /* Campos de Entrada Serios */
+    .input-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
 
-@keyframes caer{
-  0%{bottom:40px; opacity: 1;}
-  100%{bottom:-60px; opacity: 0;}
-}
+    .input-row label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
 
-.resultados{
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  margin-top: 50px;
-  min-height: 90px;
-}
+    input[type="number"] {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      padding: 10px;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      outline: none;
+      transition: all 0.3s;
+    }
 
-.resultado{
-  width:80px;
-  height:80px;
-  border-radius:50%;
-  background:white;
-  color:#222;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  font-weight: bold;
-  box-shadow: 0 4px 15px rgba(255, 77, 196, 0.5);
-  animation: aparecer 0.5s ease-out forwards;
-}
+    input[type="number"]:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.25);
+    }
 
-@keyframes aparecer {
-  from { transform: scale(0); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
+    /* Botonera de Prestigio */
+    button {
+      font-size: 0.75rem;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
 
-#statusRango { font-size: 0.9em; color: #aaa; margin: 10px; }
-</style>
+    .btn-gold {
+      background: var(--gold-metallic);
+      color: #07080c;
+      box-shadow: 0 4px 15px rgba(170, 119, 28, 0.3);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(170, 119, 28, 0.5);
+      filter: brightness(1.08);
+    }
+
+    .btn-gold:active {
+      transform: translateY(1px);
+    }
+
+    .btn-dark {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+    }
+
+    .btn-dark:hover {
+      background: rgba(212, 175, 55, 0.05);
+      border-color: var(--gold-primary);
+    }
+
+    /* Historial de Auditoría Oficial */
+    .audit-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      height: 150px;
+      overflow-y: auto;
+      font-size: 0.75rem;
+      color: var(--text-main);
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .audit-box::-webkit-scrollbar {
+      width: 4px;
+    }
+    .audit-box::-webkit-scrollbar-thumb {
+      background: var(--gold-dark);
+      border-radius: 2px;
+    }
+
+    /* Columna Central: Bolillero Clásico */
+    .arena-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .bolillero-container {
+      position: relative;
+      width: 340px;
+      height: 340px;
+      cursor: grab;
+    }
+
+    .bolillero-container:active {
+      cursor: grabbing;
+    }
+
+    /* Domo de Sorteos Profesional */
+    .bolillero-glass {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.65) 70%, rgba(212, 175, 55, 0.05) 100%);
+      border: 4px solid var(--gold-primary);
+      box-shadow: 
+        0 20px 50px rgba(0,0,0,0.7),
+        inset 0 0 40px rgba(212, 175, 55, 0.15);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas#bolillero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    /* Estructura Soporte Mecánico de Latón */
+    .bolillero-stand {
+      position: absolute;
+      width: 380px;
+      height: 190px;
+      border: 8px solid rgba(212, 175, 55, 0.3);
+      border-bottom: none;
+      border-radius: 190px 190px 0 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(180deg);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .bolillero-base {
+      position: absolute;
+      width: 170px;
+      height: 16px;
+      background: linear-gradient(to right, #050508, #2a2212, #050508);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 4px;
+      border-top: 3px solid var(--gold-primary);
+      z-index: 1;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Puerta Guillotina de Extracción */
+    #puerta {
+      width: 80px;
+      height: 32px;
+      background: linear-gradient(180deg, #181c26, #090a0f);
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 6px 6px 3px 3px;
+      border: 2px solid var(--gold-primary);
+      box-shadow: 0 -2px 10px rgba(212, 175, 55, 0.25);
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      z-index: 10;
+    }
+
+    .puerta-abierta {
+      transform: translateX(-50%) translateY(28px) scaleY(0.15);
+      opacity: 0.3;
+      border-color: #fff;
+    }
+
+    /* Botón Sorteador Real */
+    .btn-draw {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      padding: 16px 55px;
+      border-radius: 30px;
+      background: var(--gold-metallic);
+      color: #07080c;
+      box-shadow: 
+        0 8px 25px rgba(170, 119, 28, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn-draw:hover {
+      transform: scale(1.03) translateY(-1px);
+      box-shadow: 
+        0 12px 30px rgba(170, 119, 28, 0.6);
+    }
+
+    .btn-draw:active {
+      transform: scale(0.98);
+    }
+
+    /* Área de Premios de Gala */
+    .resultados-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .resultados-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+    }
+
+    .resultados {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      min-height: 125px;
+      width: 100%;
+      perspective: 1000px;
+    }
+
+    /* Tarjetas de Premios Serias */
+    .resultado-card {
+      width: 95px;
+      height: 115px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.5));
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      animation: flipIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes flipIn {
+      0% { transform: rotateY(-110deg) scale(0.85); opacity: 0; }
+      100% { transform: rotateY(0) scale(1); opacity: 1; }
+    }
+
+    .resultado-card.tier-1 {
+      border: 1.5px solid var(--gold-primary);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(0, 0, 0, 0.7));
+      box-shadow: 0 12px 30px rgba(212, 175, 55, 0.15);
+    }
+
+    .resultado-card.tier-2 {
+      border: 1.5px solid #a9a9a9;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.7));
+    }
+
+    .resultado-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .tier-1 .resultado-label { color: var(--gold-primary); font-weight: 600; }
+    .tier-2 .resultado-label { color: #dcdcdc; }
+
+    .resultado-num {
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .tier-1 .resultado-num {
+      background: var(--gold-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+    }
+
+    .tier-2 .resultado-num {
+      background: var(--silver-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    /* Modales Estilo Panel de Seguridad */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(3, 3, 5, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: linear-gradient(145deg, #0e111a, #050608);
+      border: 1px solid var(--gold-primary);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      padding: 30px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--gold-primary);
+    }
+
+    .modal p {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 25px;
+    }
+
+    .modal input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 6px;
+      color: var(--gold-primary);
+      font-size: 1.1rem;
+      text-align: center;
+      outline: none;
+      letter-spacing: 5px;
+    }
+
+    .modal input[type="password"]:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .admin-winners-inputs {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .admin-winners-inputs input {
+      width: 80px !important;
+      font-size: 1.1rem;
+      margin-bottom: 0 !important;
+    }
+
+    /* Sistema de Toasts */
+    .toast-container {
+      position: fixed;
+      top: 25px;
+      right: 25px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: rgba(10, 12, 20, 0.98);
+      border-left: 3px solid var(--gold-primary);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+    }
+
+    .toast.active {
+      transform: translateX(0);
+    }
+
+    .toast.error {
+      border-left-color: #ef4444;
+    }
+
+    .toast.success {
+      border-left-color: var(--gold-primary);
+    }
+
+    /* Canvas de Celebración */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 90;
+    }
+
+    /* Responsivo */
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+      .gala-panel {
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .arena-column {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 2rem; }
+      .bolillero-container { width: 280px; height: 280px; }
+      .bolillero-stand { width: 310px; height: 155px; }
+      .resultados { gap: 8px; }
+      .resultado-card { width: 75px; height: 95px; }
+      .resultado-num { font-size: 1.5rem; }
+    }
+  </style>
 </head>
-
 <body>
 
-<h2 ondblclick="pedirClave()">🎰 Casino Clau</h2>
+  <canvas id="confetti-canvas"></canvas>
+  
+  <header>
+    <h1 id="logo" title="Doble clic para Administrador">Casino Clau</h1>
+    <div class="subtitle">Sorteo Oficial de Gala</div>
+  </header>
 
-<div id="panelControl">
-  <p style="color:#ff4dc4; margin:0 0 10px 0;">✨ Configurar Ganadores ✨</p>
-  <input type="number" id="fijo1" placeholder="1°">
-  <input type="number" id="fijo2" placeholder="2°">
-  <input type="number" id="fijo3" placeholder="3°">
-  <br>
-  <button onclick="aplicarGanadores()" style="background:#444; font-size:12px;">Aplicar cambios</button>
-</div>
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="dashboard">
+    
+    <!-- COLUMNA IZQUIERDA: CONTROL DE RANGO -->
+    <div class="gala-panel">
+      <div class="panel-header">Límites del Sorteo</div>
+      <div class="input-row">
+        <label for="desde">Desde</label>
+        <input type="number" id="desde" value="1">
+      </div>
+      <div class="input-row">
+        <label for="hasta">Hasta</label>
+        <input type="number" id="hasta" value="99">
+      </div>
+      <button class="btn-gold" id="btn-guardar">Guardar Ajustes</button>
+      <button class="btn-dark" id="btn-reset">Restaurar Todo</button>
+    </div>
 
-<div>
-  <input type="number" id="desde" placeholder="Desde">
-  <input type="number" id="hasta" placeholder="Hasta">
-  <button onclick="guardarRango()">Guardar Rango</button>
-  <button class="reset" onclick="resetearTodo()">Reset</button>
-</div>
+    <!-- COLUMNA CENTRAL: BOLILLERO MECÁNICO -->
+    <div class="arena-column">
+      
+      <div class="bolillero-container" id="cage-drag-area">
+        <div class="bolillero-stand"></div>
+        <div class="bolillero-glass">
+          <canvas id="bolillero-canvas"></canvas>
+          <div id="puerta"></div>
+        </div>
+        <div class="bolillero-base"></div>
+      </div>
 
-<p id="statusRango">(sin rango definido)</p>
+      <button class="btn-draw" id="btn-sortear">SORTEAR</button>
 
-<div class="bolillero" id="bolillero">
-  <div id="puerta"></div>
-</div>
+      <div class="resultados-container">
+        <div class="resultados" id="resultados"></div>
+      </div>
+    </div>
 
-<button onclick="sortear()" style="font-size: 20px; padding: 15px 30px;">SORTEAR</button>
+    <!-- COLUMNA DERECHA: REGISTRO DE AUDITORÍA -->
+    <div class="gala-panel">
+      <div class="panel-header">
+        <span>Auditoría de Sorteo</span>
+        <span class="panel-status" style="color: var(--gold-primary)">● ACTIVO</span>
+      </div>
+      <div class="audit-box" id="terminal">
+        [AUDIT] Sistema de sorteo inicializado...<br>
+        [AUDIT] Esperando ajustes de rango de boletas.<br>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); display:flex; justify-content:space-between; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 10px;">
+        <span>Parámetros:</span>
+        <span id="statusRango" style="color: var(--gold-primary); font-weight: 600;">Sin rango</span>
+      </div>
+    </div>
 
-<div class="resultados" id="resultados"></div>
+  </div>
 
-<script>
-// Valores por defecto
-let numerosFijos = [10, 20, 30]; 
-let lista = JSON.parse(localStorage.getItem("bolas")) || [];
-let girando = false;
-let intervalo;
-let bolasVisuales = [];
+  <!-- MODAL DE CONTROL DE ACCESO -->
+  <div class="modal-overlay" id="modal-auth">
+    <div class="modal">
+      <h3>Seguridad del Sistema</h3>
+      <p>Introduzca la credencial de supervisor para anular o fijar destinos.</p>
+      <input type="password" id="admin-pass" placeholder="••••">
+      <div class="modal-buttons">
+        <button class="btn-dark" id="btn-cancel-auth">Cancelar</button>
+        <button class="btn-gold" id="btn-confirm-auth">Autenticar</button>
+      </div>
+    </div>
+  </div>
 
-const bolillero = document.getElementById("bolillero");
-const resultados = document.getElementById("resultados");
-const puerta = document.getElementById("puerta");
-const statusRango = document.getElementById("statusRango");
+  <!-- MODAL ASIGNAR GANADORES -->
+  <div class="modal-overlay" id="modal-admin">
+    <div class="modal">
+      <h3>Asignación Manual de Premios</h3>
+      <p>Configure los números oficiales de salida aprobados:</p>
+      <div class="admin-winners-inputs">
+        <div>
+          <span style="font-size:0.7rem; color:var(--text-muted)">3° Premio</span>
+          <input type="number" id="fijo3" placeholder="3°">
+        </div>
+        <div>
+          <span style="font-size:0.7rem; color:var(--text-muted)">2° Premio</span>
+          <input type="number" id="fijo2" placeholder="2°">
+        </div>
+        <div style="transform: scale(1.05)">
+          <span style="font-size:0.7rem; color:var(--gold-primary); font-weight: bold;">1° Premio</span>
+          <input type="number" id="fijo1" placeholder="1°" style="border-color: var(--gold-primary)">
+        </div>
+      </div>
+      <div class="modal-buttons" style="margin-top: 10px;">
+        <button class="btn-dark" id="btn-close-admin">Cerrar</button>
+        <button class="btn-gold" id="btn-apply-admin">Inyectar Valores</button>
+      </div>
+    </div>
+  </div>
 
-function renderLista() {
-  statusRango.innerText = lista.length 
-    ? "🎯 Rango: " + lista[0] + " al " + lista[lista.length-1] + " (" + lista.length + " bolas)"
-    : "(sin rango definido)";
-}
-renderLista();
+  <div class="toast-container" id="toast-container"></div>
 
-function guardarRango() {
-  let d = Number(document.getElementById("desde").value);
-  let h = Number(document.getElementById("hasta").value);
-  if(!d || !h || d > h) { alert("Rango inválido"); return; }
-  lista = [];
-  for(let i=d; i<=h; i++) lista.push(i);
-  localStorage.setItem("bolas", JSON.stringify(lista));
-  renderLista();
-  resetearBolillero();
-}
+  <script>
+    // --- ESTADO GLOBAL ---
+    let numerosFijos = [30, 20, 10]; // [3º Premio, 2º Premio, 1º Premio]
+    let listaRango = JSON.parse(localStorage.getItem("bolas_epico")) || [];
+    let sorteando = false;
+    let audioCtx = null;
 
-function aplicarGanadores() {
-  let g1 = Number(document.getElementById("fijo1").value);
-  let g2 = Number(document.getElementById("fijo2").value);
-  let g3 = Number(document.getElementById("fijo3").value);
-  if(g1 && g2 && g3) {
-    numerosFijos = [g1, g2, g3];
-    alert("Ganadores configurados: " + numerosFijos.join(" - "));
-    document.getElementById("panelControl").style.display = "none";
-  } else {
-    alert("Completá los 3 números");
-  }
-}
+    // --- ELEMENTOS DEL DOM ---
+    const logo = document.getElementById("logo");
+    const btnGuardar = document.getElementById("btn-guardar");
+    const btnReset = document.getElementById("btn-reset");
+    const btnSortear = document.getElementById("btn-sortear");
+    const desdeInput = document.getElementById("desde");
+    const hastaInput = document.getElementById("hasta");
+    const statusRango = document.getElementById("statusRango");
+    const puerta = document.getElementById("puerta");
+    const resultadosDiv = document.getElementById("resultados");
+    const terminal = document.getElementById("terminal");
+    const cageArea = document.getElementById("cage-drag-area");
+    
+    const modalAuth = document.getElementById("modal-auth");
+    const modalAdmin = document.getElementById("modal-admin");
+    const adminPassInput = document.getElementById("admin-pass");
+    const btnCancelAuth = document.getElementById("btn-cancel-auth");
+    const btnConfirmAuth = document.getElementById("btn-confirm-auth");
+    const btnCloseAdmin = document.getElementById("btn-close-admin");
+    const btnApplyAdmin = document.getElementById("btn-apply-admin");
+    const fijo1Input = document.getElementById("fijo1");
+    const fijo2Input = document.getElementById("fijo2");
+    const fijo3Input = document.getElementById("fijo3");
 
-function pedirClave() {
-  let clave = prompt("Contraseña de Administrador:");
-  if(clave === "cacatua12") {
-    document.getElementById("panelControl").style.display = "block";
-  } else {
-    alert("Acceso denegado");
-  }
-}
+    const canvas = document.getElementById("bolillero-canvas");
+    const ctx = canvas.getContext("2d");
+    const confettiCanvas = document.getElementById("confetti-canvas");
+    const confettiCtx = confettiCanvas.getContext("2d");
 
-function resetearTodo() {
-  localStorage.removeItem("bolas");
-  lista = [];
-  renderLista();
-  resetearBolillero();
-  resultados.innerHTML = "";
-  girando = false;
-  clearInterval(intervalo);
-}
-
-function resetearBolillero() {
-  bolillero.querySelectorAll('.bolita').forEach(b => b.remove());
-  bolasVisuales = [];
-  let colores = ["roja", "azul", "verde", "amarilla"];
-  for(let i=0; i<25; i++) {
-    let d = document.createElement("div");
-    d.className = "bolita " + colores[Math.floor(Math.random() * 4)];
-    d.style.top = Math.random() * 180 + "px";
-    d.style.left = Math.random() * 180 + "px";
-    bolillero.appendChild(d);
-    bolasVisuales.push(d);
-  }
-}
-
-function mover() {
-  if(!girando) return;
-  bolasVisuales.forEach(b => {
-    if(!b.dataset.sorteada) {
-      b.style.top = Math.random() * 180 + "px";
-      b.style.left = Math.random() * 180 + "px";
+    // --- LOGS DE AUDITORÍA ---
+    function logToTerminal(message, type = "info") {
+      const time = new Date().toLocaleTimeString().split(' ')[0];
+      let col = "#f3f4f6";
+      if (type === "warn") col = "#d4af37";
+      if (type === "err") col = "#ef4444";
+      if (type === "prize") col = "#ffd700";
+      
+      terminal.innerHTML += `<span style="color: ${col}">[${time}] ${message}</span><br>`;
+      terminal.scrollTop = terminal.scrollHeight;
     }
-  });
-}
 
-function sacar(num, texto, delay, orden) {
-  setTimeout(() => {
-    let c = 0;
-    let animSorteo = setInterval(() => {
-      if(++c > 15) {
-        clearInterval(animSorteo);
-        puerta.classList.add("puerta-abierta");
-
-        // Seleccionamos una bola del montón
-        let b = bolasVisuales[bolasVisuales.length - orden]; 
-        if(!b) return;
-        
-        b.dataset.sorteada = "true";
-        b.innerText = num;
-        b.style.zIndex = "20";
-        b.style.left = "50%";
-        b.style.top = "210px";
-        b.style.transform = "translateX(-50%)";
-
-        if(orden==1) b.classList.add("bola1");
-        if(orden==2) b.classList.add("bola2");
-        if(orden==3) b.classList.add("bola3");
-
-        setTimeout(() => {
-          b.style.animation = "caer 0.8s forwards";
-          setTimeout(() => {
-            puerta.classList.remove("puerta-abierta");
-            let r = document.createElement("div");
-            r.className = "resultado";
-            r.innerHTML = "<small style='color:#ff4dc4'>" + texto + "</small>" + num;
-            resultados.appendChild(r);
-          }, 400);
-        }, 300);
+    // --- SINTETIZADOR DE AUDIO DE GALA (CAMPANILLAS Y ARPAS) ---
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
-    }, 70);
-  }, delay);
-}
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
 
-function sortear() {
-  if(lista.length === 0) {
-    alert("Primero definí el rango de números");
-    return;
-  }
-  resultados.innerHTML = "";
-  resetearBolillero();
-  girando = true;
-  intervalo = setInterval(mover, 120);
+    function unlockAudio() {
+      initAudio();
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    }
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
 
-  // 3 segundos (3000ms) entre cada salida
-  for(let i=0; i<numerosFijos.length; i++) {
-    sacar(numerosFijos[i], (i+1) + "º Premio", i * 3000, i + 1);
-  }
+    // Nota de Campana pura con envolvente exponencial refinada
+    function playChime(freq, duration, vol = 0.08) {
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const oscHarmonic = audioCtx.createOscillator(); // Armónico cristalino para imitar campana real
+        const gain = audioCtx.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        // El armónico suena exactamente al doble de frecuencia
+        oscHarmonic.type = 'sine';
+        oscHarmonic.frequency.setValueAtTime(freq * 2, audioCtx.currentTime);
 
-  setTimeout(() => {
-    girando = false;
-    clearInterval(intervalo);
-  }, (numerosFijos.length * 3000) + 2000);
-}
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        
+        osc.connect(gain);
+        oscHarmonic.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        oscHarmonic.start();
+        osc.stop(audioCtx.currentTime + duration);
+        oscHarmonic.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
 
-resetearBolillero();
-</script>
+    function playBounceSound(vel) {
+      const tone = 400 + Math.min(vel * 30, 800);
+      playChime(tone, 0.12, 0.015 * Math.min(vel, 1));
+    }
 
+    function playExtraccionSound() {
+      // Sonido descendente cristalino metálico
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch (e) {}
+    }
+
+    function playWinnerHarp(isGold) {
+      // Arpegio de arpa clásica (Escala Mayor de Do)
+      const base = isGold ? 329.63 : 261.63; // Mi4 o Do4
+      const intervals = [1, 1.25, 1.5, 1.875, 2, 2.5]; 
+      intervals.forEach((mult, index) => {
+        setTimeout(() => {
+          playChime(base * mult, 1.2, 0.06);
+        }, index * 90);
+      });
+    }
+
+    function playFinalGrandChime() {
+      // Melodía solemne de gran triunfo
+      const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+      notes.forEach((f, idx) => {
+        setTimeout(() => {
+          playChime(f, 1.5, 0.06);
+        }, idx * 250);
+      });
+    }
+
+    // --- TOASTS ---
+    function showToast(message, type = 'info') {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerText = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add("active"), 10);
+      setTimeout(() => {
+        toast.classList.remove("active");
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // --- FÍSICA Y REBOTE DE BOLITAS DE MARFIL (CANVAS) ---
+    let balls = [];
+    let sparkles = []; 
+    let isSpinning = false;
+    let spinIntensity = 1;
+    let dragForceX = 0;
+    let dragForceY = 0;
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    class Sparkle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 4;
+        this.vy = (Math.random() - 0.5) * 4;
+        this.size = Math.random() * 2 + 0.8;
+        this.color = color;
+        this.life = 1.0;
+        this.decay = Math.random() * 0.03 + 0.015;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.05;
+        this.life -= this.decay;
+      }
+      draw(cContext) {
+        cContext.save();
+        cContext.globalAlpha = this.life;
+        cContext.fillStyle = this.color;
+        cContext.beginPath();
+        cContext.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        cContext.fill();
+        cContext.restore();
+      }
+    }
+
+    class Ball {
+      constructor(x, y, radius, color, number = '') {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 5;
+        this.vy = (Math.random() - 0.5) * 5;
+        this.radius = radius;
+        this.color = color;
+        this.number = number;
+        this.isExiting = false;
+        this.exitProgress = 0;
+      }
+
+      update(width, height) {
+        if (this.isExiting) {
+          const targetX = width / 2;
+          const targetY = height - 10;
+          this.x += (targetX - this.x) * 0.12;
+          this.y += (targetY - this.y) * 0.12;
+          this.exitProgress += 0.025;
+          return;
+        }
+
+        // Simulación de chorro de aire mecánico
+        if (isSpinning) {
+          const centerX = width / 2;
+          const centerY = height / 2;
+          const dx = this.x - centerX;
+          const dy = this.y - centerY;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+          
+          const force = 0.15 * spinIntensity;
+          this.vx += (-dy / dist) * force + (Math.random() - 0.5) * 1.5;
+          this.vy += (dx / dist) * force + (Math.random() - 0.5) * 1.5;
+        }
+
+        if (isDragging) {
+          this.vx += dragForceX * 0.05;
+          this.vy += dragForceY * 0.05;
+        }
+
+        this.vy += 0.2; // Gravedad terrestre clásica
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const limitRadius = (width / 2) - this.radius - 8;
+        const dx = this.x - centerX;
+        const dy = this.y - centerY;
+        const distance = Math.sqrt(dx*dx + dy*dy) || 1;
+
+        if (distance > limitRadius) {
+          const angle = Math.atan2(dy, dx);
+          this.x = centerX + limitRadius * Math.cos(angle);
+          this.y = centerY + limitRadius * Math.sin(angle);
+
+          const nx = Math.cos(angle);
+          const ny = Math.sin(angle);
+          const dot = this.vx * nx + this.vy * ny;
+          this.vx = (this.vx - 2 * dot * nx) * 0.8;
+          this.vy = (this.vy - 2 * dot * ny) * 0.8;
+
+          const totalVel = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
+          if (totalVel > 1.8) {
+            playBounceSound(totalVel);
+            if (Math.random() < 0.25) {
+              const sparkX = centerX + (limitRadius + this.radius) * Math.cos(angle);
+              const sparkY = centerY + (limitRadius + this.radius) * Math.sin(angle);
+              sparkles.push(new Sparkle(sparkX, sparkY, "rgba(212, 175, 55, 0.6)"));
+            }
+          }
+        }
+      }
+
+      draw(cContext) {
+        cContext.save();
+        
+        // Degradado de esfera clásica (marfil / crema de gala)
+        const radGrad = cContext.createRadialGradient(
+          this.x - this.radius*0.35, this.y - this.radius*0.35, this.radius*0.08,
+          this.x, this.y, this.radius
+        );
+        
+        if (this.color === 'gold') {
+          radGrad.addColorStop(0, '#fffdf0');
+          radGrad.addColorStop(0.4, '#d4af37');
+          radGrad.addColorStop(1, '#664c05');
+        } else if (this.color === 'silver') {
+          radGrad.addColorStop(0, '#ffffff');
+          radGrad.addColorStop(0.4, '#b0b0b0');
+          radGrad.addColorStop(1, '#474747');
+        } else {
+          // Marfil estándar
+          radGrad.addColorStop(0, '#ffffff');
+          radGrad.addColorStop(0.6, '#eae1cd');
+          radGrad.addColorStop(1, '#8e826b');
+        }
+
+        cContext.beginPath();
+        cContext.arc(this.x, this.y, this.radius * (1 - this.exitProgress * 0.5), 0, Math.PI * 2);
+        cContext.fillStyle = radGrad;
+        cContext.fill();
+
+        // Número pintado con tipografía romana clásica
+        if (this.number !== '' && this.exitProgress < 0.85) {
+          cContext.fillStyle = '#1e1c18';
+          cContext.font = `bold ${Math.round(this.radius * 0.9)}px 'Cinzel', serif`;
+          cContext.textAlign = 'center';
+          cContext.textBaseline = 'middle';
+          cContext.fillText(this.number, this.x, this.y + 1);
+        }
+        cContext.restore();
+      }
+    }
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+
+    function initBolillero() {
+      resizeCanvas();
+      balls = [];
+      sparkles = [];
+      const numBolas = 40;
+      const r = 12;
+      
+      for (let i = 0; i < numBolas; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * (canvas.width / 2 - r - 25);
+        const x = canvas.width / 2 + dist * Math.cos(angle);
+        const y = canvas.height / 2 + dist * Math.sin(angle);
+        
+        // Color estándar de marfil refinado
+        balls.push(new Ball(x, y, r, 'ivory'));
+      }
+    }
+
+    // Interacción manual elegante
+    cageArea.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      lastX = e.clientX - rect.left;
+      lastY = e.clientY - rect.top;
+      initAudio();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const currentX = e.clientX - rect.left;
+      const currentY = e.clientY - rect.top;
+      dragForceX = currentX - lastX;
+      dragForceY = currentY - lastY;
+      lastX = currentX;
+      lastY = currentY;
+
+      if (Math.abs(dragForceX) > 1.5 && Math.random() < 0.15) {
+        playChime(300 + Math.abs(dragForceX)*4, 0.08, 0.015);
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      dragForceX = 0;
+      dragForceY = 0;
+    });
+
+    cageArea.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      lastX = e.touches[0].clientX - rect.left;
+      lastY = e.touches[0].clientY - rect.top;
+      initAudio();
+    }, {passive: true});
+
+    cageArea.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const currentX = e.touches[0].clientX - rect.left;
+      const currentY = e.touches[0].clientY - rect.top;
+      dragForceX = currentX - lastX;
+      dragForceY = currentY - lastY;
+      lastX = currentX;
+      lastY = currentY;
+    }, {passive: true});
+
+    cageArea.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    function resolveCollisions() {
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          const b1 = balls[i];
+          const b2 = balls[j];
+          if (b1.isExiting || b2.isExiting) continue;
+
+          const dx = b2.x - b1.x;
+          const dy = b2.y - b1.y;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+          const minDist = b1.radius + b2.radius;
+
+          if (dist < minDist) {
+            const angle = Math.atan2(dy, dx);
+            const targetX = b1.x + minDist * Math.cos(angle);
+            const targetY = b1.y + minDist * Math.sin(angle);
+            const ax = (targetX - b2.x) * 0.5;
+            const ay = (targetY - b2.y) * 0.5;
+
+            b1.x -= ax;
+            b1.y -= ay;
+            b2.x += ax;
+            b2.y += ay;
+
+            const tempVx = b1.vx;
+            const tempVy = b1.vy;
+            b1.vx = b2.vx * 0.9;
+            b1.vy = b2.vy * 0.9;
+            b2.vx = tempVx * 0.9;
+            b2.vy = tempVy * 0.9;
+          }
+        }
+      }
+    }
+
+    function animLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      resolveCollisions();
+
+      sparkles.forEach((sp, idx) => {
+        sp.update();
+        sp.draw(ctx);
+        if (sp.life <= 0) sparkles.splice(idx, 1);
+      });
+
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const b = balls[i];
+        b.update(canvas.width, canvas.height);
+        b.draw(ctx);
+        if (b.isExiting && b.exitProgress >= 1) {
+          balls.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animLoop);
+    }
+
+    // --- CELEBRACIÓN DE LLUVIA DE HOJAS DE ORO ---
+    let confettiParticles = [];
+    let confettiActive = false;
+
+    class GoldLeaf {
+      constructor() {
+        this.x = Math.random() * confettiCanvas.width;
+        this.y = Math.random() * -confettiCanvas.height - 20;
+        this.sizeW = Math.random() * 12 + 8;
+        this.sizeH = Math.random() * 6 + 4;
+        
+        // Hojas de oro y plata de gala
+        this.color = Math.random() > 0.4 ? '#d4af37' : '#e5e7eb';
+        this.speedX = Math.random() * 1.5 - 0.75;
+        this.speedY = Math.random() * 2 + 1.2; // Caída más elegante y lenta
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 2 - 1;
+      }
+      update() {
+        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.5; // Oscilación suave como papel flotando
+        this.y += this.speedY;
+        this.rotation += this.rotationSpeed;
+        if (this.y > confettiCanvas.height) {
+          this.y = -20;
+          this.x = Math.random() * confettiCanvas.width;
+        }
+      }
+      draw() {
+        confettiCtx.save();
+        confettiCtx.translate(this.x, this.y);
+        confettiCtx.rotate(this.rotation * Math.PI / 180);
+        confettiCtx.fillStyle = this.color;
+        
+        // Brillo metálico refinado
+        confettiCtx.shadowBlur = 4;
+        confettiCtx.shadowColor = this.color;
+        
+        confettiCtx.beginPath();
+        confettiCtx.ellipse(0, 0, this.sizeW/2, this.sizeH/2, 0, 0, Math.PI * 2);
+        confettiCtx.fill();
+        confettiCtx.restore();
+      }
+    }
+
+    function resizeConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+
+    function startConfetti() {
+      resizeConfetti();
+      confettiParticles = [];
+      for (let i = 0; i < 80; i++) {
+        confettiParticles.push(new GoldLeaf());
+      }
+      confettiActive = true;
+    }
+
+    function stopConfetti() {
+      confettiActive = false;
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+
+    function confettiLoop() {
+      if (!confettiActive) return;
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiParticles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(confettiLoop);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      if (confettiActive) resizeConfetti();
+    });
+
+    // --- ACCIONES DE JUEGO ---
+    function renderRangoUI() {
+      if (listaRango.length > 0) {
+        statusRango.innerText = `${listaRango[0]} a ${listaRango[listaRango.length-1]} (${listaRango.length} números)`;
+        statusRango.style.color = 'var(--gold-primary)';
+      } else {
+        statusRango.innerText = 'Sin rango';
+        statusRango.style.color = 'var(--text-muted)';
+      }
+    }
+
+    btnGuardar.addEventListener('click', () => {
+      initAudio();
+      const d = Number(desdeInput.value);
+      const h = Number(hastaInput.value);
+
+      if (isNaN(d) || isNaN(h) || d >= h || d < 1) {
+        showToast("Rango de boletas inválido.", "error");
+        logToTerminal("ERROR: Intento fallido al definir espectro del sorteo.", "err");
+        return;
+      }
+
+      listaRango = [];
+      for (let i = d; i <= h; i++) {
+        listaRango.push(i);
+      }
+      localStorage.setItem("premium_desde", d);
+      localStorage.setItem("premium_hasta", h);
+      localStorage.setItem("bolas_epico", JSON.stringify(listaRango));
+      
+      renderRangoUI();
+      initBolillero();
+      
+      playChime(523.25, 0.4, 0.05);
+      showToast("Configuración guardada oficialmente.", "success");
+      logToTerminal(`[SIS] Espectro autorizado: Rango boletas ${d} a ${h}.`);
+    });
+
+    btnReset.addEventListener('click', () => {
+      initAudio();
+      localStorage.removeItem("premium_desde");
+      localStorage.removeItem("premium_hasta");
+      localStorage.removeItem("bolas_epico");
+      listaRango = [];
+      desdeInput.value = 1;
+      hastaInput.value = 99;
+      renderRangoUI();
+      initBolillero();
+      resultadosDiv.innerHTML = "";
+      stopConfetti();
+      playChime(261.63, 0.5, 0.05);
+      showToast("Parámetros del bolillero restaurados.");
+      logToTerminal("[SIS] Restauración general del sistema de sorteo completada.", "warn");
+    });
+
+    function sortear() {
+      if (listaRango.length === 0) {
+        showToast("Fije el rango de números primero.", "error");
+        return;
+      }
+      if (sorteando) return;
+
+      initAudio();
+      sorteando = true;
+      stopConfetti();
+      resultadosDiv.innerHTML = "";
+      isSpinning = true;
+      spinIntensity = 1.5;
+      
+      logToTerminal("[SIS] Activando centrifugación del bolillero por inyección de aire...");
+      showToast("Bolillero en movimiento.", "info");
+
+      // Aceleración de rotación mecánica de bolas
+      let accel = setInterval(() => {
+        spinIntensity += 0.8;
+        if (spinIntensity > 5.5) clearInterval(accel);
+      }, 150);
+
+      const premios = [
+        { label: "Tercer Premio", num: numerosFijos[0], color: 'ivory', isGold: false },
+        { label: "Segundo Premio", num: numerosFijos[1], color: 'silver', isGold: false },
+        { label: "Primer Premio", num: numerosFijos[2], color: 'gold', isGold: true }
+      ];
+
+      premios.forEach((premio, index) => {
+        const drawDelay = 3000 + (index * 4000);
+        
+        setTimeout(() => {
+          // Apertura solemne de la compuerta de extracción
+          puerta.classList.add("puerta-abierta");
+          playExtraccionSound();
+
+          // Crear bola física que saldrá por el túnel
+          setTimeout(() => {
+            const outBall = new Ball(
+              canvas.width / 2, 
+              canvas.height / 2 + 35, 
+              16, 
+              premio.color, 
+              premio.num
+            );
+            outBall.isExiting = true;
+            balls.push(outBall);
+
+            logToTerminal(`[EXCLUSIVO] ${premio.label} adjudicado a la Boleta #${premio.num}`, "prize");
+
+            // Crear tarjeta de premio solemne
+            setTimeout(() => {
+              puerta.classList.remove("puerta-abierta");
+              
+              const card = document.createElement("div");
+              card.className = `resultado-card ${premio.isGold ? 'tier-1' : (index === 1 ? 'tier-2' : '')}`;
+              card.innerHTML = `
+                <div class="resultado-label">${premio.label}</div>
+                <div class="resultado-num">${premio.num}</div>
+              `;
+              resultadosDiv.appendChild(card);
+              
+              playWinnerHarp(premio.isGold);
+
+              // Último premio mayor
+              if (index === premios.length - 1) {
+                setTimeout(() => {
+                  isSpinning = false;
+                  sorteando = false;
+                  
+                  // Iniciar celebración premium
+                  startConfetti();
+                  confettiLoop();
+                  playFinalGrandChime();
+                  
+                  logToTerminal("[AUDIT] Sorteo concluido bajo normativas oficiales vigentes.", "prize");
+                  showToast("🏆 ¡Sorteo Oficial de Gala Finalizado!", "success");
+                }, 1200);
+              }
+            }, 800);
+
+          }, 400);
+
+        }, drawDelay);
+      });
+    }
+
+    btnSortear.addEventListener('click', sortear);
+
+    // --- SEGURIDAD Y ACCESO DE ADMINISTRACIÓN ---
+    logo.addEventListener('dblclick', () => {
+      initAudio();
+      adminPassInput.value = "";
+      modalAuth.classList.add("active");
+      logToTerminal("[ALERTA] Supervisor intentando acceder a consola maestra...", "warn");
+    });
+
+    btnCancelAuth.addEventListener('click', () => {
+      modalAuth.classList.remove("active");
+    });
+
+    btnConfirmAuth.addEventListener('click', () => {
+      if (adminPassInput.value === "cacatua12") {
+        modalAuth.classList.remove("active");
+        fijo1Input.value = numerosFijos[2];
+        fijo2Input.value = numerosFijos[1];
+        fijo3Input.value = numerosFijos[0];
+        modalAdmin.classList.add("active");
+        logToTerminal("[OK] Credenciales de supervisor autorizadas.", "warn");
+        showToast("Sesión de administración autorizada.", "success");
+      } else {
+        showToast("Credencial rechazada.", "error");
+        logToTerminal("[ERROR] Fallo de autenticación en panel de seguridad.", "err");
+        playChime(150, 0.4, 0.1);
+      }
+    });
+
+    btnCloseAdmin.addEventListener('click', () => {
+      modalAdmin.classList.remove("active");
+    });
+
+    btnApplyAdmin.addEventListener('click', () => {
+      const g1 = Number(fijo1Input.value);
+      const g2 = Number(fijo2Input.value);
+      const g3 = Number(fijo3Input.value);
+
+      if (!g1 || !g2 || !g3) {
+        showToast("Complete los valores de auditoría.", "error");
+        return;
+      }
+
+      numerosFijos = [g3, g2, g1];
+      modalAdmin.classList.remove("active");
+      showToast("Salidas de bolillas reprogramadas.", "success");
+      logToTerminal(`[SIS] Auditoría forzó resultados de salida: [3º:#${g3}] [2º:#${g2}] [1º:#${g1}].`);
+      playChime(600, 0.2, 0.05);
+    });
+
+    // --- ARRANQUE ---
+    window.onload = () => {
+      const prevDesde = localStorage.getItem("premium_desde");
+      const prevHasta = localStorage.getItem("premium_hasta");
+      if (prevDesde && prevHasta) {
+        desdeInput.value = prevDesde;
+        hastaInput.value = prevHasta;
+      }
+      renderRangoUI();
+      initBolillero();
+      animLoop();
+    };
+  </script>
 </body>
 </html>
+
+```
