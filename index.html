@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -406,13 +407,14 @@
     .resultados {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
       min-height: 125px;
       width: 100%;
       perspective: 1000px;
+      flex-wrap: wrap; /* Permite que se acomoden si son muchos premios */
     }
 
-    /* Tarjetas de Premios Serias */
+    /* Tarjetas de Premios */
     .resultado-card {
       width: 105px;
       height: 120px;
@@ -510,7 +512,7 @@
       border-radius: 12px;
       padding: 30px;
       width: 90%;
-      max-width: 420px;
+      max-width: 450px;
       text-align: center;
       transform: scale(0.9);
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
@@ -564,6 +566,13 @@
       gap: 12px;
       justify-content: center;
       margin-bottom: 25px;
+      flex-wrap: wrap; /* Para que entren bien múltiples casillas forzadas */
+    }
+
+    .admin-winners-inputs > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .admin-winners-inputs input {
@@ -622,43 +631,16 @@
       z-index: 90;
     }
 
-    /* Responsivo adaptable en caso de pantallas más chicas o celulares */
+    /* Responsivo */
     @media (max-width: 950px) {
-      html, body {
-        overflow-y: auto;
-        height: auto;
-      }
-      body {
-        padding: 15px;
-      }
-      .fullscreen-trigger {
-        position: static;
-        margin-bottom: 10px;
-        align-self: center;
-      }
-      .dashboard {
-        grid-template-columns: 1fr;
-        gap: 25px;
-        height: auto;
-      }
-      .gala-panel {
-        max-width: 500px;
-        width: 100%;
-        margin: 0 auto;
-        height: auto;
-        max-height: none;
-      }
-      .arena-column {
-        order: -1;
-      }
-      .bolillero-container {
-        width: 320px;
-        height: 320px;
-      }
-      .bolillero-stand {
-        width: 360px;
-        height: 180px;
-      }
+      html, body { overflow-y: auto; height: auto; }
+      body { padding: 15px; }
+      .fullscreen-trigger { position: static; margin-bottom: 10px; align-self: center; }
+      .dashboard { grid-template-columns: 1fr; gap: 25px; height: auto; }
+      .gala-panel { max-width: 500px; width: 100%; margin: 0 auto; height: auto; max-height: none; }
+      .arena-column { order: -1; }
+      .bolillero-container { width: 320px; height: 320px; }
+      .bolillero-stand { width: 360px; height: 180px; }
     }
 
     @media (max-width: 500px) {
@@ -680,7 +662,7 @@
 
   <header>
     <h1 id="logo" title="Doble clic para Administrador">SORTEO de CLAU FICHITAS</h1>
-    <div class="subtitle">Sorteo Oficial Oficial</div>
+    <div class="subtitle">Sorteo Oficial</div>
   </header>
 
   <!-- CONTENEDOR PRINCIPAL -->
@@ -697,6 +679,10 @@
         <div class="input-row">
           <label for="hasta">Hasta</label>
           <input type="number" id="hasta" value="99">
+        </div>
+        <div class="input-row">
+          <label for="cant-premios">Premios</label>
+          <input type="number" id="cant-premios" value="3" min="1" max="5">
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -732,7 +718,7 @@
       </div>
       <div class="audit-box" id="terminal">
         [AUDIT] Sistema de sorteo inicializado...<br>
-        [AUDIT] Esperando ajustes de rango de boletas.<br>
+        [AUDIT] Esperando ajustes de rango de bolillas.<br>
       </div>
       <div style="font-size: 0.75rem; color: var(--text-muted); display:flex; justify-content:space-between; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 10px;">
         <span>Parámetros:</span>
@@ -755,25 +741,15 @@
     </div>
   </div>
 
-  <!-- MODAL ASIGNAR GANADORES -->
+  <!-- MODAL DINÁMICO ASIGNAR GANADORES -->
   <div class="modal-overlay" id="modal-admin">
     <div class="modal">
       <h3>Asignación Manual de Premios</h3>
       <p>Configure los números oficiales de salida aprobados:</p>
-      <div class="admin-winners-inputs">
-        <div>
-          <span style="font-size:0.7rem; color:var(--text-muted)">3° Premio</span>
-          <input type="number" id="fijo3" placeholder="3°">
-        </div>
-        <div>
-          <span style="font-size:0.7rem; color:var(--text-muted)">2° Premio</span>
-          <input type="number" id="fijo2" placeholder="2°">
-        </div>
-        <div style="transform: scale(1.05)">
-          <span style="font-size:0.7rem; color:var(--gold-primary); font-weight: bold;">1° Premio</span>
-          <input type="number" id="fijo1" placeholder="1°" style="border-color: var(--gold-primary)">
-        </div>
-      </div>
+      
+      <!-- Contenedor dinámico de casillas forzadas -->
+      <div class="admin-winners-inputs" id="admin-inputs-container"></div>
+      
       <div class="modal-buttons" style="margin-top: 10px;">
         <button class="btn-dark" id="btn-close-admin">Cerrar</button>
         <button class="btn-gold" id="btn-apply-admin">Inyectar Valores</button>
@@ -785,8 +761,26 @@
 
   <script>
     // --- ESTADO GLOBAL ---
-    let numerosFijos = [30, 20, 10]; // [3º Premio, 2º Premio, 1º Premio]
-    let listaRango = JSON.parse(localStorage.getItem("bolas_epico")) || [];
+    let cantidadPremios = Number(localStorage.getItem("premium_cantidad")) || 3;
+    let listaRango = JSON.parse(localStorage.getItem("bolas_epico"));
+    
+    // Si no hay rango previo guardado en el navegador, inicializamos uno del 1 al 99 por defecto
+    if (!listaRango || listaRango.length === 0) {
+      listaRango = [];
+      for (let i = 1; i <= 99; i++) {
+        listaRango.push(i);
+      }
+    }
+
+    let numerosFijos = JSON.parse(localStorage.getItem("premium_fijos"));
+    // Si no hay números fijos o la cantidad cargada cambió, los generamos de forma segura para evitar errores
+    if (!numerosFijos || numerosFijos.length !== cantidadPremios) {
+      numerosFijos = [];
+      for (let i = 0; i < cantidadPremios; i++) {
+        numerosFijos.push(listaRango[Math.min(listaRango.length - 1 - i * 5, listaRango.length - 1)] || (10 + i * 10));
+      }
+    }
+
     let sorteando = false;
     let audioCtx = null;
 
@@ -797,6 +791,7 @@
     const btnSortear = document.getElementById("btn-sortear");
     const desdeInput = document.getElementById("desde");
     const hastaInput = document.getElementById("hasta");
+    const cantPremiosInput = document.getElementById("cant-premios");
     const statusRango = document.getElementById("statusRango");
     const puerta = document.getElementById("puerta");
     const resultadosDiv = document.getElementById("resultados");
@@ -811,14 +806,14 @@
     const btnConfirmAuth = document.getElementById("btn-confirm-auth");
     const btnCloseAdmin = document.getElementById("btn-close-admin");
     const btnApplyAdmin = document.getElementById("btn-apply-admin");
-    const fijo1Input = document.getElementById("fijo1");
-    const fijo2Input = document.getElementById("fijo2");
-    const fijo3Input = document.getElementById("fijo3");
+    const adminInputsContainer = document.getElementById("admin-inputs-container");
 
     const canvas = document.getElementById("bolillero-canvas");
     const ctx = canvas.getContext("2d");
     const confettiCanvas = document.getElementById("confetti-canvas");
     const confettiCtx = confettiCanvas.getContext("2d");
+
+    cantPremiosInput.value = cantidadPremios;
 
     // --- MANEJO DE PANTALLA COMPLETA ---
     fullscreenBtn.addEventListener("click", () => {
@@ -1324,15 +1319,34 @@
       }
     }
 
+    // Guardar ajustes de límites y cantidad de ganadores
     btnGuardar.addEventListener('click', () => {
       initAudio();
       const d = Number(desdeInput.value);
       const h = Number(hastaInput.value);
+      const cant = Number(cantPremiosInput.value);
 
       if (isNaN(d) || isNaN(h) || d >= h || d < 1) {
-        showToast("Rango de boletas inválido.", "error");
+        showToast("Rango de bolillas inválido.", "error");
         logToTerminal("ERROR: Intento fallido al definir espectro del sorteo.", "err");
         return;
+      }
+
+      if (isNaN(cant) || cant < 1 || cant > 5) {
+        showToast("La cantidad de premios debe ser entre 1 y 5.", "error");
+        return;
+      }
+
+      cantidadPremios = cant;
+      localStorage.setItem("premium_cantidad", cantidadPremios);
+
+      // Si cambió la cantidad de premios, reajustamos el array de números fijos para que no tire error
+      if (numerosFijos.length !== cantidadPremios) {
+        numerosFijos = [];
+        for (let i = 0; i < cantidadPremios; i++) {
+          numerosFijos.push(listaRango[i] || (10 + i * 10)); 
+        }
+        localStorage.setItem("premium_fijos", JSON.stringify(numerosFijos));
       }
 
       listaRango = [];
@@ -1348,17 +1362,28 @@
       
       playChime(523.25, 0.4, 0.05);
       showToast("Configuración guardada oficialmente.", "success");
-      logToTerminal(`[SIS] Espectro autorizado: Rango boletas ${d} a ${h}.`);
+      logToTerminal(`[SIS] Ajustes: Rango ${d} a ${h}. Total premios: ${cantidadPremios}`);
     });
 
     btnReset.addEventListener('click', () => {
       initAudio();
       localStorage.removeItem("premium_desde");
       localStorage.removeItem("premium_hasta");
+      localStorage.removeItem("premium_cantidad");
+      localStorage.removeItem("premium_fijos");
       localStorage.removeItem("bolas_epico");
+      
+      // Default reset values
       listaRango = [];
+      for (let i = 1; i <= 99; i++) {
+        listaRango.push(i);
+      }
       desdeInput.value = 1;
       hastaInput.value = 99;
+      cantPremiosInput.value = 3;
+      cantidadPremios = 3;
+      numerosFijos = [30, 20, 10];
+      
       renderRangoUI();
       initBolillero();
       resultadosDiv.innerHTML = "";
@@ -1368,6 +1393,7 @@
       logToTerminal("[SIS] Restauración general del sistema de sorteo completada.", "warn");
     });
 
+    // --- DINÁMICA DE EXTRACCIÓN CON SOPORTE VARIABLE ---
     function sortear() {
       if (listaRango.length === 0) {
         showToast("Fije el rango de números primero.", "error");
@@ -1390,11 +1416,25 @@
         if (spinIntensity > 5.5) clearInterval(accel);
       }, 150);
 
-      const premios = [
-        { label: "Tercer Premio", num: numerosFijos[0], color: 'ivory', isGold: false },
-        { label: "Segundo Premio", num: numerosFijos[1], color: 'silver', isGold: false },
-        { label: "Primer Premio", num: numerosFijos[2], color: 'gold', isGold: true }
-      ];
+      // Armamos los premios de forma dinámica según lo elegido
+      const premios = [];
+      for (let i = 0; i < cantidadPremios; i++) {
+        // El último premio siempre se considera el "Primer Premio" de gala (Dorado)
+        const esUltimo = (i === cantidadPremios - 1);
+        const esSegundo = (i === cantidadPremios - 2);
+        
+        let tag = `${cantidadPremios - i}° Premio`;
+        if (esUltimo) tag = "Primer Premio";
+        if (esSegundo && cantidadPremios > 1) tag = "Segundo Premio";
+
+        premios.push({
+          label: tag,
+          num: numerosFijos[i] || 7,
+          color: esUltimo ? 'gold' : (esSegundo ? 'silver' : 'ivory'),
+          isGold: esUltimo,
+          isSilver: esSegundo && !esUltimo
+        });
+      }
 
       premios.forEach((premio, index) => {
         const drawDelay = 3000 + (index * 4000);
@@ -1414,13 +1454,13 @@
             outBall.isExiting = true;
             balls.push(outBall);
 
-            logToTerminal(`[EXCLUSIVO] ${premio.label} adjudicado a la Boleta #${premio.num}`, "prize");
+            logToTerminal(`[EXCLUSIVO] ${premio.label} adjudicado a la Bolilla #${premio.num}`, "prize");
 
             setTimeout(() => {
               puerta.classList.remove("puerta-abierta");
               
               const card = document.createElement("div");
-              card.className = `resultado-card ${premio.isGold ? 'tier-1' : (index === 1 ? 'tier-2' : '')}`;
+              card.className = `resultado-card ${premio.isGold ? 'tier-1' : (premio.isSilver ? 'tier-2' : '')}`;
               card.innerHTML = `
                 <div class="resultado-label">${premio.label}</div>
                 <div class="resultado-num">${premio.num}</div>
@@ -1452,7 +1492,7 @@
 
     btnSortear.addEventListener('click', sortear);
 
-    // --- SEGURIDAD Y ACCESO DE ADMINISTRACIÓN ---
+    // --- SEGURIDAD Y ACCESO DE ADMINISTRACIÓN (DOBLE CLIC) ---
     logo.addEventListener('dblclick', () => {
       initAudio();
       adminPassInput.value = "";
@@ -1465,9 +1505,28 @@
     btnConfirmAuth.addEventListener('click', () => {
       if (adminPassInput.value === "cacatua12") {
         modalAuth.classList.remove("active");
-        fijo1Input.value = numerosFijos[2];
-        fijo2Input.value = numerosFijos[1];
-        fijo3Input.value = numerosFijos[0];
+        
+        // CREACIÓN DINÁMICA DE ENTRADAS EN EL PANEL DE SUPERVISOR
+        adminInputsContainer.innerHTML = "";
+        
+        for (let i = 0; i < cantidadPremios; i++) {
+          const esUltimo = (i === cantidadPremios - 1);
+          const esSegundo = (i === cantidadPremios - 2);
+          
+          let tag = `${cantidadPremios - i}° Premio`;
+          if (esUltimo) tag = "1° Premio";
+          if (esSegundo && cantidadPremios > 1) tag = "2° Premio";
+
+          const divBox = document.createElement("div");
+          if (esUltimo) divBox.style.transform = "scale(1.05)";
+          
+          divBox.innerHTML = `
+            <span style="font-size:0.7rem; color:${esUltimo ? 'var(--gold-primary)' : 'var(--text-muted)'}; font-weight:${esUltimo ? 'bold' : 'normal'};">${tag}</span>
+            <input type="number" class="fijo-input-dinamico" data-index="${i}" value="${numerosFijos[i] || ''}" style="${esUltimo ? 'border-color: var(--gold-primary)' : ''}">
+          `;
+          adminInputsContainer.appendChild(divBox);
+        }
+
         modalAdmin.classList.add("active");
         logToTerminal("[OK] Credenciales de supervisor autorizadas.", "warn");
         showToast("Sesión de administración autorizada.", "success");
@@ -1480,20 +1539,37 @@
 
     btnCloseAdmin.addEventListener('click', () => { modalAdmin.classList.remove("active"); });
 
+    // Aplicar los valores inyectados manualmente
     btnApplyAdmin.addEventListener('click', () => {
-      const g1 = Number(fijo1Input.value);
-      const g2 = Number(fijo2Input.value);
-      const g3 = Number(fijo3Input.value);
+      const inputsDinamicos = document.querySelectorAll(".fijo-input-dinamico");
+      let nuevosFijos = new Array(cantidadPremios);
+      let valid = true;
 
-      if (!g1 || !g2 || !g3) {
-        showToast("Complete los valores de auditoría.", "error");
+      inputsDinamicos.forEach(input => {
+        const idx = Number(input.getAttribute("data-index"));
+        const val = Number(input.value);
+        if (!val) {
+          valid = false;
+        }
+        nuevosFijos[idx] = val;
+      });
+
+      if (!valid) {
+        showToast("Complete todos los campos de auditoría.", "error");
         return;
       }
 
-      numerosFijos = [g3, g2, g1];
+      numerosFijos = nuevosFijos;
+      localStorage.setItem("premium_fijos", JSON.stringify(numerosFijos));
+      
       modalAdmin.classList.remove("active");
       showToast("Salidas de bolillas reprogramadas.", "success");
-      logToTerminal(`[SIS] Auditoría forzó resultados de salida: [3º:#${g3}] [2º:#${g2}] [1º:#${g1}].`);
+      
+      let logRes = "";
+      for (let i = 0; i < cantidadPremios; i++) {
+        logRes += `[${cantidadPremios - i}°:#${numerosFijos[i]}] `;
+      }
+      logToTerminal(`[SIS] Consola forzó resultados: ${logRes}`);
       playChime(600, 0.2, 0.05);
     });
 
@@ -1511,3 +1587,5 @@
   </script>
 </body>
 </html>
+
+```
