@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎰 Casino Clau - Sorteo</title>
+  <title>🎰 Sorteo de Clau Fichitas</title>
   
   <!-- Tipografías de Prestigio (Serif Clásica y Sans-Serif Limpia) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,25 +31,55 @@
       font-family: 'Inter', sans-serif;
     }
 
-    body {
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
       background-color: var(--bg-dark);
+    }
+
+    body {
       background-image: 
         radial-gradient(circle at 50% 20%, #111526 0%, var(--bg-dark) 85%);
       color: var(--text-main);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 30px 20px;
-      overflow-x: hidden;
+      padding: 20px;
       position: relative;
     }
 
-    /* Cabecera Clásica de Gala */
+    /* Botón Superior de Pantalla Completa */
+    .fullscreen-trigger {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      z-index: 100;
+      font-size: 0.75rem;
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .fullscreen-trigger:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    }
+
+    /* Cabecera de Sorteo */
     header {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
+      margin-top: 10px;
       z-index: 5;
     }
 
@@ -59,7 +88,7 @@
       font-size: 2.8rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 5px;
+      letter-spacing: 4px;
       background: var(--gold-metallic);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -76,25 +105,27 @@
     .subtitle {
       font-family: 'Cinzel', serif;
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 6px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
-    /* Layout Panel de Control de Gala */
+    /* Layout Ajustado para Pantalla Completa sin Scroll */
     .dashboard {
       width: 100%;
-      max-width: 1140px;
+      max-width: 1350px;
+      flex: 1;
       display: grid;
-      grid-template-columns: 280px 1fr 280px;
-      gap: 30px;
+      grid-template-columns: 290px 1fr 290px;
+      gap: 24px;
       align-items: center;
       z-index: 2;
+      padding-bottom: 15px;
     }
 
-    /* Paneles de Cuero y Oro */
+    /* Paneles Principales */
     .gala-panel {
       background: var(--panel-bg);
       backdrop-filter: blur(20px);
@@ -107,8 +138,11 @@
         inset 0 0 20px rgba(212, 175, 55, 0.03);
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
       position: relative;
+      height: 100%;
+      max-height: 520px;
+      justify-content: space-between;
     }
 
     .panel-header {
@@ -134,7 +168,15 @@
       font-weight: 600;
     }
 
-    /* Campos de Entrada Serios */
+    .panel-body-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-grow: 1;
+      justify-content: center;
+    }
+
+    /* Campos de Entrada */
     .input-row {
       display: flex;
       justify-content: space-between;
@@ -168,7 +210,7 @@
       box-shadow: 0 0 8px rgba(212, 175, 55, 0.25);
     }
 
-    /* Botonera de Prestigio */
+    /* Botonera */
     button {
       font-size: 0.75rem;
       padding: 12px 20px;
@@ -193,10 +235,6 @@
       filter: brightness(1.08);
     }
 
-    .btn-gold:active {
-      transform: translateY(1px);
-    }
-
     .btn-dark {
       background: rgba(255, 255, 255, 0.04);
       color: var(--text-main);
@@ -214,7 +252,9 @@
       border: 1px solid rgba(212, 175, 55, 0.1);
       border-radius: 8px;
       padding: 12px;
-      height: 150px;
+      flex-grow: 1;
+      height: 100%;
+      min-height: 200px;
       overflow-y: auto;
       font-size: 0.75rem;
       color: var(--text-main);
@@ -235,13 +275,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 25px;
+      justify-content: space-around;
+      height: 100%;
+      gap: 20px;
     }
 
     .bolillero-container {
       position: relative;
-      width: 340px;
-      height: 340px;
+      width: 370px;
+      height: 370px;
       cursor: grab;
     }
 
@@ -278,11 +320,11 @@
     /* Estructura Soporte Mecánico de Latón */
     .bolillero-stand {
       position: absolute;
-      width: 380px;
-      height: 190px;
+      width: 410px;
+      height: 205px;
       border: 8px solid rgba(212, 175, 55, 0.3);
       border-bottom: none;
-      border-radius: 190px 190px 0 0;
+      border-radius: 205px 205px 0 0;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) rotate(180deg);
@@ -292,7 +334,7 @@
 
     .bolillero-base {
       position: absolute;
-      width: 170px;
+      width: 180px;
       height: 16px;
       background: linear-gradient(to right, #050508, #2a2212, #050508);
       bottom: -10px;
@@ -329,9 +371,9 @@
     /* Botón Sorteador Real */
     .btn-draw {
       font-family: 'Cinzel', serif;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      padding: 16px 55px;
+      padding: 16px 65px;
       border-radius: 30px;
       background: var(--gold-metallic);
       color: #07080c;
@@ -339,10 +381,11 @@
         0 8px 25px rgba(170, 119, 28, 0.4),
         inset 0 0 10px rgba(255, 255, 255, 0.4);
       transition: all 0.2s ease;
+      z-index: 10;
     }
 
     .btn-draw:hover {
-      transform: scale(1.03) translateY(-1px);
+      transform: scale(1.04) translateY(-1px);
       box-shadow: 
         0 12px 30px rgba(170, 119, 28, 0.6);
     }
@@ -351,21 +394,13 @@
       transform: scale(0.98);
     }
 
-    /* Área de Premios de Gala */
+    /* Área de Premios */
     .resultados-container {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 12px;
-    }
-
-    .resultados-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      color: var(--text-muted);
     }
 
     .resultados {
@@ -379,8 +414,8 @@
 
     /* Tarjetas de Premios Serias */
     .resultado-card {
-      width: 95px;
-      height: 115px;
+      width: 105px;
+      height: 120px;
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.5));
       border: 1px solid rgba(212, 175, 55, 0.15);
       border-radius: 8px;
@@ -416,7 +451,8 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
+      text-align: center;
     }
 
     .tier-1 .resultado-label { color: var(--gold-primary); font-weight: 600; }
@@ -424,7 +460,7 @@
 
     .resultado-num {
       font-family: 'Cinzel', serif;
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 700;
       color: #fff;
     }
@@ -586,19 +622,42 @@
       z-index: 90;
     }
 
-    /* Responsivo */
-    @media (max-width: 900px) {
+    /* Responsivo adaptable en caso de pantallas más chicas o celulares */
+    @media (max-width: 950px) {
+      html, body {
+        overflow-y: auto;
+        height: auto;
+      }
+      body {
+        padding: 15px;
+      }
+      .fullscreen-trigger {
+        position: static;
+        margin-bottom: 10px;
+        align-self: center;
+      }
       .dashboard {
         grid-template-columns: 1fr;
         gap: 25px;
+        height: auto;
       }
       .gala-panel {
         max-width: 500px;
         width: 100%;
         margin: 0 auto;
+        height: auto;
+        max-height: none;
       }
       .arena-column {
         order: -1;
+      }
+      .bolillero-container {
+        width: 320px;
+        height: 320px;
+      }
+      .bolillero-stand {
+        width: 360px;
+        height: 180px;
       }
     }
 
@@ -607,8 +666,8 @@
       .bolillero-container { width: 280px; height: 280px; }
       .bolillero-stand { width: 310px; height: 155px; }
       .resultados { gap: 8px; }
-      .resultado-card { width: 75px; height: 95px; }
-      .resultado-num { font-size: 1.5rem; }
+      .resultado-card { width: 85px; height: 100px; }
+      .resultado-num { font-size: 1.6rem; }
     }
   </style>
 </head>
@@ -616,9 +675,12 @@
 
   <canvas id="confetti-canvas"></canvas>
   
+  <!-- Disparador de pantalla completa -->
+  <button class="fullscreen-trigger" id="fullscreen-btn">Pantalla Completa</button>
+
   <header>
-    <h1 id="logo" title="Doble clic para Administrador">Casino Clau</h1>
-    <div class="subtitle">Sorteo Oficial de Gala</div>
+    <h1 id="logo" title="Doble clic para Administrador">SORTEO de CLAU FICHITAS</h1>
+    <div class="subtitle">Sorteo Oficial Oficial</div>
   </header>
 
   <!-- CONTENEDOR PRINCIPAL -->
@@ -627,16 +689,20 @@
     <!-- COLUMNA IZQUIERDA: CONTROL DE RANGO -->
     <div class="gala-panel">
       <div class="panel-header">Límites del Sorteo</div>
-      <div class="input-row">
-        <label for="desde">Desde</label>
-        <input type="number" id="desde" value="1">
+      <div class="panel-body-content">
+        <div class="input-row">
+          <label for="desde">Desde</label>
+          <input type="number" id="desde" value="1">
+        </div>
+        <div class="input-row">
+          <label for="hasta">Hasta</label>
+          <input type="number" id="hasta" value="99">
+        </div>
       </div>
-      <div class="input-row">
-        <label for="hasta">Hasta</label>
-        <input type="number" id="hasta" value="99">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn-gold" id="btn-guardar">Guardar Ajustes</button>
+        <button class="btn-dark" id="btn-reset">Restaurar Todo</button>
       </div>
-      <button class="btn-gold" id="btn-guardar">Guardar Ajustes</button>
-      <button class="btn-dark" id="btn-reset">Restaurar Todo</button>
     </div>
 
     <!-- COLUMNA CENTRAL: BOLILLERO MECÁNICO -->
@@ -679,7 +745,7 @@
   <!-- MODAL DE CONTROL DE ACCESO -->
   <div class="modal-overlay" id="modal-auth">
     <div class="modal">
-      <h3>Seguridad del Sistema</h3>
+      <h3>Security Check</h3>
       <p>Introduzca la credencial de supervisor para anular o fijar destinos.</p>
       <input type="password" id="admin-pass" placeholder="••••">
       <div class="modal-buttons">
@@ -736,6 +802,7 @@
     const resultadosDiv = document.getElementById("resultados");
     const terminal = document.getElementById("terminal");
     const cageArea = document.getElementById("cage-drag-area");
+    const fullscreenBtn = document.getElementById("fullscreen-btn");
     
     const modalAuth = document.getElementById("modal-auth");
     const modalAdmin = document.getElementById("modal-admin");
@@ -753,6 +820,33 @@
     const confettiCanvas = document.getElementById("confetti-canvas");
     const confettiCtx = confettiCanvas.getContext("2d");
 
+    // --- MANEJO DE PANTALLA COMPLETA ---
+    fullscreenBtn.addEventListener("click", () => {
+      initAudio();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          fullscreenBtn.innerText = "Salir de Pantalla";
+          setTimeout(resizeCanvas, 150);
+        }).catch(err => {
+          showToast("No se pudo activar la pantalla completa automáticamente.", "error");
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          fullscreenBtn.innerText = "Pantalla Completa";
+          setTimeout(resizeCanvas, 150);
+        });
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        fullscreenBtn.innerText = "Pantalla Completa";
+      } else {
+        fullscreenBtn.innerText = "Salir de Pantalla";
+      }
+      setTimeout(resizeCanvas, 150);
+    });
+
     // --- LOGS DE AUDITORÍA ---
     function logToTerminal(message, type = "info") {
       const time = new Date().toLocaleTimeString().split(' ')[0];
@@ -765,7 +859,7 @@
       terminal.scrollTop = terminal.scrollHeight;
     }
 
-    // --- SINTETIZADOR DE AUDIO DE GALA (CAMPANILLAS Y ARPAS) ---
+    // --- SINTETIZADOR DE AUDIO ---
     function initAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -783,18 +877,16 @@
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
 
-    // Nota de Campana pura con envolvente exponencial refinada
     function playChime(freq, duration, vol = 0.08) {
       if (!audioCtx) return;
       try {
         const osc = audioCtx.createOscillator();
-        const oscHarmonic = audioCtx.createOscillator(); // Armónico cristalino para imitar campana real
+        const oscHarmonic = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
         
-        // El armónico suena exactamente al doble de frecuencia
         oscHarmonic.type = 'sine';
         oscHarmonic.frequency.setValueAtTime(freq * 2, audioCtx.currentTime);
 
@@ -818,7 +910,6 @@
     }
 
     function playExtraccionSound() {
-      // Sonido descendente cristalino metálico
       if (!audioCtx) return;
       try {
         const osc = audioCtx.createOscillator();
@@ -836,8 +927,7 @@
     }
 
     function playWinnerHarp(isGold) {
-      // Arpegio de arpa clásica (Escala Mayor de Do)
-      const base = isGold ? 329.63 : 261.63; // Mi4 o Do4
+      const base = isGold ? 329.63 : 261.63;
       const intervals = [1, 1.25, 1.5, 1.875, 2, 2.5]; 
       intervals.forEach((mult, index) => {
         setTimeout(() => {
@@ -847,7 +937,6 @@
     }
 
     function playFinalGrandChime() {
-      // Melodía solemne de gran triunfo
       const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
       notes.forEach((f, idx) => {
         setTimeout(() => {
@@ -856,7 +945,6 @@
       });
     }
 
-    // --- TOASTS ---
     function showToast(message, type = 'info') {
       const container = document.getElementById("toast-container");
       const toast = document.createElement("div");
@@ -870,7 +958,7 @@
       }, 3500);
     }
 
-    // --- FÍSICA Y REBOTE DE BOLITAS DE MARFIL (CANVAS) ---
+    // --- FÍSICA Y REBOTE DE BOLITAS ---
     let balls = [];
     let sparkles = []; 
     let isSpinning = false;
@@ -932,7 +1020,6 @@
           return;
         }
 
-        // Simulación de chorro de aire mecánico
         if (isSpinning) {
           const centerX = width / 2;
           const centerY = height / 2;
@@ -950,7 +1037,7 @@
           this.vy += dragForceY * 0.05;
         }
 
-        this.vy += 0.2; // Gravedad terrestre clásica
+        this.vy += 0.2; 
         this.vx *= 0.99;
         this.vy *= 0.99;
 
@@ -990,7 +1077,6 @@
       draw(cContext) {
         cContext.save();
         
-        // Degradado de esfera clásica (marfil / crema de gala)
         const radGrad = cContext.createRadialGradient(
           this.x - this.radius*0.35, this.y - this.radius*0.35, this.radius*0.08,
           this.x, this.y, this.radius
@@ -1005,7 +1091,6 @@
           radGrad.addColorStop(0.4, '#b0b0b0');
           radGrad.addColorStop(1, '#474747');
         } else {
-          // Marfil estándar
           radGrad.addColorStop(0, '#ffffff');
           radGrad.addColorStop(0.6, '#eae1cd');
           radGrad.addColorStop(1, '#8e826b');
@@ -1016,7 +1101,6 @@
         cContext.fillStyle = radGrad;
         cContext.fill();
 
-        // Número pintado con tipografía romana clásica
         if (this.number !== '' && this.exitProgress < 0.85) {
           cContext.fillStyle = '#1e1c18';
           cContext.font = `bold ${Math.round(this.radius * 0.9)}px 'Cinzel', serif`;
@@ -1033,6 +1117,50 @@
       canvas.height = canvas.parentElement.clientHeight;
     }
 
+    // --- LLUVIA DE HOJAS METÁLICAS ---
+    let confettiParticles = [];
+    let confettiActive = false;
+
+    class GoldLeaf {
+      constructor() {
+        this.x = Math.random() * confettiCanvas.width;
+        this.y = Math.random() * -confettiCanvas.height - 20;
+        this.sizeW = Math.random() * 12 + 8;
+        this.sizeH = Math.random() * 6 + 4;
+        this.color = Math.random() > 0.4 ? '#d4af37' : '#e5e7eb';
+        this.speedX = Math.random() * 1.5 - 0.75;
+        this.speedY = Math.random() * 2 + 1.2;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 2 - 1;
+      }
+      update() {
+        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.5;
+        this.y += this.speedY;
+        this.rotation += this.rotationSpeed;
+        if (this.y > confettiCanvas.height) {
+          this.y = -20;
+          this.x = Math.random() * confettiCanvas.width;
+        }
+      }
+      draw() {
+        confettiCtx.save();
+        confettiCtx.translate(this.x, this.y);
+        confettiCtx.rotate(this.rotation * Math.PI / 180);
+        confettiCtx.fillStyle = this.color;
+        confettiCtx.shadowBlur = 4;
+        confettiCtx.shadowColor = this.color;
+        confettiCtx.beginPath();
+        confettiCtx.ellipse(0, 0, this.sizeW/2, this.sizeH/2, 0, 0, Math.PI * 2);
+        confettiCtx.fill();
+        confettiCtx.restore();
+      }
+    }
+
+    function resizeConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+
     function initBolillero() {
       resizeCanvas();
       balls = [];
@@ -1045,13 +1173,10 @@
         const dist = Math.random() * (canvas.width / 2 - r - 25);
         const x = canvas.width / 2 + dist * Math.cos(angle);
         const y = canvas.height / 2 + dist * Math.sin(angle);
-        
-        // Color estándar de marfil refinado
         balls.push(new Ball(x, y, r, 'ivory'));
       }
     }
 
-    // Interacción manual elegante
     cageArea.addEventListener('mousedown', (e) => {
       isDragging = true;
       const rect = canvas.getBoundingClientRect();
@@ -1100,9 +1225,7 @@
       lastY = currentY;
     }, {passive: true});
 
-    cageArea.addEventListener('touchend', () => {
-      isDragging = false;
-    });
+    cageArea.addEventListener('touchend', () => { isDragging = false; });
 
     function resolveCollisions() {
       for (let i = 0; i < balls.length; i++) {
@@ -1159,55 +1282,6 @@
       }
 
       requestAnimationFrame(animLoop);
-    }
-
-    // --- CELEBRACIÓN DE LLUVIA DE HOJAS DE ORO ---
-    let confettiParticles = [];
-    let confettiActive = false;
-
-    class GoldLeaf {
-      constructor() {
-        this.x = Math.random() * confettiCanvas.width;
-        this.y = Math.random() * -confettiCanvas.height - 20;
-        this.sizeW = Math.random() * 12 + 8;
-        this.sizeH = Math.random() * 6 + 4;
-        
-        // Hojas de oro y plata de gala
-        this.color = Math.random() > 0.4 ? '#d4af37' : '#e5e7eb';
-        this.speedX = Math.random() * 1.5 - 0.75;
-        this.speedY = Math.random() * 2 + 1.2; // Caída más elegante y lenta
-        this.rotation = Math.random() * 360;
-        this.rotationSpeed = Math.random() * 2 - 1;
-      }
-      update() {
-        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.5; // Oscilación suave como papel flotando
-        this.y += this.speedY;
-        this.rotation += this.rotationSpeed;
-        if (this.y > confettiCanvas.height) {
-          this.y = -20;
-          this.x = Math.random() * confettiCanvas.width;
-        }
-      }
-      draw() {
-        confettiCtx.save();
-        confettiCtx.translate(this.x, this.y);
-        confettiCtx.rotate(this.rotation * Math.PI / 180);
-        confettiCtx.fillStyle = this.color;
-        
-        // Brillo metálico refinado
-        confettiCtx.shadowBlur = 4;
-        confettiCtx.shadowColor = this.color;
-        
-        confettiCtx.beginPath();
-        confettiCtx.ellipse(0, 0, this.sizeW/2, this.sizeH/2, 0, 0, Math.PI * 2);
-        confettiCtx.fill();
-        confettiCtx.restore();
-      }
-    }
-
-    function resizeConfetti() {
-      confettiCanvas.width = window.innerWidth;
-      confettiCanvas.height = window.innerHeight;
     }
 
     function startConfetti() {
@@ -1311,7 +1385,6 @@
       logToTerminal("[SIS] Activando centrifugación del bolillero por inyección de aire...");
       showToast("Bolillero en movimiento.", "info");
 
-      // Aceleración de rotación mecánica de bolas
       let accel = setInterval(() => {
         spinIntensity += 0.8;
         if (spinIntensity > 5.5) clearInterval(accel);
@@ -1327,11 +1400,9 @@
         const drawDelay = 3000 + (index * 4000);
         
         setTimeout(() => {
-          // Apertura solemne de la compuerta de extracción
           puerta.classList.add("puerta-abierta");
           playExtraccionSound();
 
-          // Crear bola física que saldrá por el túnel
           setTimeout(() => {
             const outBall = new Ball(
               canvas.width / 2, 
@@ -1345,7 +1416,6 @@
 
             logToTerminal(`[EXCLUSIVO] ${premio.label} adjudicado a la Boleta #${premio.num}`, "prize");
 
-            // Crear tarjeta de premio solemne
             setTimeout(() => {
               puerta.classList.remove("puerta-abierta");
               
@@ -1359,19 +1429,17 @@
               
               playWinnerHarp(premio.isGold);
 
-              // Último premio mayor
               if (index === premios.length - 1) {
                 setTimeout(() => {
                   isSpinning = false;
                   sorteando = false;
                   
-                  // Iniciar celebración premium
                   startConfetti();
                   confettiLoop();
                   playFinalGrandChime();
                   
                   logToTerminal("[AUDIT] Sorteo concluido bajo normativas oficiales vigentes.", "prize");
-                  showToast("🏆 ¡Sorteo Oficial de Gala Finalizado!", "success");
+                  showToast("🏆 ¡Sorteo de Clau Fichitas Finalizado!", "success");
                 }, 1200);
               }
             }, 800);
@@ -1392,9 +1460,7 @@
       logToTerminal("[ALERTA] Supervisor intentando acceder a consola maestra...", "warn");
     });
 
-    btnCancelAuth.addEventListener('click', () => {
-      modalAuth.classList.remove("active");
-    });
+    btnCancelAuth.addEventListener('click', () => { modalAuth.classList.remove("active"); });
 
     btnConfirmAuth.addEventListener('click', () => {
       if (adminPassInput.value === "cacatua12") {
@@ -1412,9 +1478,7 @@
       }
     });
 
-    btnCloseAdmin.addEventListener('click', () => {
-      modalAdmin.classList.remove("active");
-    });
+    btnCloseAdmin.addEventListener('click', () => { modalAdmin.classList.remove("active"); });
 
     btnApplyAdmin.addEventListener('click', () => {
       const g1 = Number(fijo1Input.value);
@@ -1433,7 +1497,6 @@
       playChime(600, 0.2, 0.05);
     });
 
-    // --- ARRANQUE ---
     window.onload = () => {
       const prevDesde = localStorage.getItem("premium_desde");
       const prevHasta = localStorage.getItem("premium_hasta");
@@ -1448,5 +1511,3 @@
   </script>
 </body>
 </html>
-
-```
