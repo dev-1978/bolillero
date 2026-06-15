@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎰 Sorteo de Clau Fichitas - Edición Gala Premium</title>
+  
+  <!-- Tipografías de Prestigio (Serif Clásica y Sans-Serif Limpia) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #05060a;
+      --panel-bg: rgba(10, 13, 23, 0.85);
+      --gold-dark: #8c6212;
+      --gold-light: #fdf5d6;
+      --gold-metallic: linear-gradient(135deg, #cf9d3c, #fbf5b7, #aa771c, #fcf6ba, #8c6212);
+      --silver-metallic: linear-gradient(135deg, #b0b0b0, #ffffff, #7a7a7a, #ffffff, #4f4f4f);
+      --gold-primary: #d4af37;
+      --border-color: rgba(212, 175, 55, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #8a92a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+    }
+
+    body {
+      background-image: 
+        radial-gradient(circle at 50% 25%, #0f142c 0%, var(--bg-dark) 90%);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      position: relative;
+    }
+
+    /* Botón Superior de Pantalla Completa */
+    .fullscreen-trigger {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      z-index: 100;
+      font-size: 0.7rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .fullscreen-trigger:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    }
+
+    /* Cabecera de Sorteo */
+    header {
+      text-align: center;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      z-index: 5;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      background: var(--gold-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+      cursor: pointer;
+      user-select: none;
+      transition: filter 0.3s;
+    }
+
+    h1:hover {
+      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+    }
+
+    .subtitle {
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      margin-top: 4px;
+    }
+
+    /* Layout Ajustado para Pantalla Completa sin Scroll */
+    .dashboard {
+      width: 100%;
+      max-width: 1300px;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 280px 1fr 280px;
+      gap: 20px;
+      align-items: center;
+      z-index: 2;
+      padding-bottom: 10px;
+    }
+
+    /* Paneles Principales */
+    .gala-panel {
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.7),
+        inset 0 0 15px rgba(212, 175, 55, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      position: relative;
+      height: 100%;
+      max-height: 500px;
+      justify-content: space-between;
+    }
+
+    .panel-header {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      letter-spacing: 1.5px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+      padding-bottom: 8px;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-status {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .panel-body-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+      justify-content: center;
+    }
+
+    /* Campos de Entrada */
+    .input-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .input-row label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    input[type="number"] {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      padding: 8px;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.25);
+    }
+
+    /* Botonera */
+    button {
+      font-size: 0.7rem;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-gold {
+      background: var(--gold-metallic);
+      color: #05060a;
+      box-shadow: 0 4px 15px rgba(170, 119, 28, 0.3);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(170, 119, 28, 0.5);
+      filter: brightness(1.1);
+    }
+
+    .btn-dark {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+    }
+
+    .btn-dark:hover {
+      background: rgba(212, 175, 55, 0.05);
+      border-color: var(--gold-primary);
+    }
+
+    /* Historial de Auditoría Oficial */
+    .audit-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      flex-grow: 1;
+      height: 100%;
+      min-height: 180px;
+      overflow-y: auto;
+      font-size: 0.7rem;
+      color: var(--text-main);
+      line-height: 1.4;
+      text-align: left;
+    }
+
+    .audit-box::-webkit-scrollbar {
+      width: 4px;
+    }
+    .audit-box::-webkit-scrollbar-thumb {
+      background: var(--gold-dark);
+      border-radius: 2px;
+    }
+
+    /* Columna Central: Bolillero Clásico */
+    .arena-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      height: 100%;
+      gap: 15px;
+    }
+
+    .bolillero-container {
+      position: relative;
+      width: 350px;
+      height: 350px;
+      cursor: grab;
+    }
+
+    .bolillero-container:active {
+      cursor: grabbing;
+    }
+
+    /* Domo de Sorteos Profesional */
+    .bolillero-glass {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.7) 70%, rgba(212, 175, 55, 0.05) 100%);
+      border: 4px solid var(--gold-primary);
+      box-shadow: 
+        0 15px 45px rgba(0,0,0,0.8),
+        inset 0 0 30px rgba(212, 175, 55, 0.2);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas#bolillero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    /* Estructura Soporte Mecánico de Latón */
+    .bolillero-stand {
+      position: absolute;
+      width: 390px;
+      height: 195px;
+      border: 8px solid rgba(212, 175, 55, 0.3);
+      border-bottom: none;
+      border-radius: 195px 195px 0 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(180deg);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .bolillero-base {
+      position: absolute;
+      width: 170px;
+      height: 14px;
+      background: linear-gradient(to right, #030305, #221c0e, #030305);
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 4px;
+      border-top: 3px solid var(--gold-primary);
+      z-index: 1;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    }
+
+    /* Puerta Guillotina de Extracción */
+    #puerta {
+      width: 70px;
+      height: 28px;
+      background: linear-gradient(180deg, #131722, #06070a);
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 6px 6px 3px 3px;
+      border: 2px solid var(--gold-primary);
+      box-shadow: 0 -2px 10px rgba(212, 175, 55, 0.25);
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      z-index: 10;
+    }
+
+    .puerta-abierta {
+      transform: translateX(-50%) translateY(24px) scaleY(0.15);
+      opacity: 0.3;
+      border-color: #fff;
+    }
+
+    /* Botón Sorteador Real */
+    .btn-draw {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      padding: 12px 55px;
+      border-radius: 30px;
+      background: var(--gold-metallic);
+      color: #05060a;
+      box-shadow: 
+        0 8px 25px rgba(170, 119, 28, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.4);
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .btn-draw:hover {
+      transform: scale(1.04) translateY(-1px);
+      box-shadow: 0 12px 30px rgba(170, 119, 28, 0.6);
+    }
+
+    .btn-draw:active {
+      transform: scale(0.98);
+    }
+
+    /* Área de Premios */
+    .resultados-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .resultados {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      min-height: 110px;
+      width: 100%;
+      perspective: 1000px;
+      flex-wrap: wrap;
+    }
+
+    /* Tarjetas de Premios */
+    .resultado-card {
+      width: 95px;
+      height: 105px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.6));
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      animation: flipIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes flipIn {
+      0% { transform: rotateY(-110deg) scale(0.85); opacity: 0; }
+      100% { transform: rotateY(0) scale(1); opacity: 1; }
+    }
+
+    .resultado-card.tier-1 {
+      border: 1.5px solid var(--gold-primary);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(0, 0, 0, 0.7));
+      box-shadow: 0 12px 30px rgba(212, 175, 55, 0.15);
+    }
+
+    .resultado-card.tier-2 {
+      border: 1.5px solid #a9a9a9;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.7));
+    }
+
+    .resultado-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .tier-1 .resultado-label { color: var(--gold-primary); font-weight: 600; }
+    .tier-2 .resultado-label { color: #dcdcdc; }
+
+    .resultado-num {
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .tier-1 .resultado-num {
+      background: var(--gold-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+    }
+
+    .tier-2 .resultado-num {
+      background: var(--silver-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    /* --- EFECTO GALA: PRESENTACIÓN GIGANTE DE BOLILLA SELECCIONADA --- */
+    .epic-draw-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 4, 8, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .epic-draw-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .epic-ball-display {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #d4af37 50%, #4a3403 100%);
+      box-shadow: 
+        0 0 50px rgba(212, 175, 55, 0.6),
+        inset 0 0 20px rgba(255,255,255,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: scale(0.2) rotate(-360deg);
+      transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .epic-draw-overlay.active .epic-ball-display {
+      transform: scale(1) rotate(0deg);
+    }
+
+    .epic-ball-display.silver {
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #b0b0b0 50%, #2f2f2f 100%);
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.4), inset 0 0 20px rgba(255,255,255,0.8);
+    }
+
+    .epic-ball-display.ivory {
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #eae1cd 50%, #565042 100%);
+      box-shadow: 0 0 40px rgba(234, 225, 205, 0.3), inset 0 0 20px rgba(255,255,255,0.8);
+    }
+
+    .epic-ball-num {
+      font-family: 'Cinzel', serif;
+      font-size: 5.5rem;
+      font-weight: 900;
+      color: #1a1a1a;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
+      user-select: none;
+      transition: font-size 0.2s ease;
+    }
+
+    .epic-ball-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold-primary);
+      letter-spacing: 3px;
+      margin-top: 30px;
+      text-transform: uppercase;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease 0.6s;
+    }
+
+    .epic-draw-overlay.active .epic-ball-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Modales Estilo Panel de Seguridad */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(3, 3, 5, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: linear-gradient(145deg, #0d101a, #040507);
+      border: 1px solid var(--gold-primary);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      padding: 30px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--gold-primary);
+    }
+
+    .modal p {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 20px;
+    }
+
+    .modal input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 6px;
+      color: var(--gold-primary);
+      font-size: 1.1rem;
+      text-align: center;
+      outline: none;
+      letter-spacing: 5px;
+    }
+
+    .modal input[type="password"]:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .admin-winners-inputs {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .admin-winners-inputs > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .admin-winners-inputs input {
+      width: 75px !important;
+      font-size: 1.1rem;
+      margin-bottom: 0 !important;
+    }
+
+    /* Sistema de Toasts */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: rgba(10, 12, 20, 0.98);
+      border-left: 3px solid var(--gold-primary);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+    }
+
+    .toast.active {
+      transform: translateX(0);
+    }
+
+    .toast.error {
+      border-left-color: #ef4444;
+    }
+
+    .toast.success {
+      border-left-color: var(--gold-primary);
+    }
+
+    /* Canvas de Celebración */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 90;
+    }
+
+    /* Responsivo */
+    @media (max-width: 950px) {
+      html, body { overflow-y: auto; height: auto; }
+      body { padding: 15px; }
+      .fullscreen-trigger { position: static; margin-bottom: 10px; align-self: center; }
+      .dashboard { grid-template-columns: 1fr; gap: 20px; height: auto; }
+      .gala-panel { max-width: 500px; width: 100%; margin: 0 auto; height: auto; max-height: none; }
+      .arena-column { order: -1; }
+      .bolillero-container { width: 300px; height: 300px; }
+      .bolillero-stand { width: 340px; height: 170px; }
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 1.8rem; }
+      .bolillero-container { width: 260px; height: 260px; }
+      .bolillero-stand { width: 290px; height: 145px; }
+      .resultados { gap: 8px; }
+      .resultado-card { width: 80px; height: 95px; }
+      .resultado-num { font-size: 1.5rem; }
+      .epic-ball-display { width: 150px; height: 150px; }
+      .epic-ball-num { font-size: 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+  
+  <!-- Disparador de pantalla completa -->
+  <button class="fullscreen-trigger" id="fullscreen-btn">Pantalla Completa</button>
+
+  <header>
+    <h1 id="logo" title="Doble clic para Administrador">SORTEO de CLAU FICHITAS</h1>
+    <div class="subtitle">Sorteo Oficial</div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="dashboard">
+    
+    <!-- COLUMNA IZQUIERDA: CONTROL DE RANGO -->
+    <div class="gala-panel">
+      <div class="panel-header">Límites del Sorteo</div>
+      <div class="panel-body-content">
+        <div class="input-row">
+          <label for="desde">Desde</label>
+          <input type="number" id="desde" value="1">
+        </div>
+        <div class="input-row">
+          <label for="hasta">Hasta</label>
+          <input type="number" id="hasta" value="99">
+        </div>
+        <div class="input-row">
+          <label for="cant-premios">Premios</label>
+          <input type="number" id="cant-premios" value="3" min="1" max="5">
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn-gold" id="btn-guardar">Guardar Ajustes</button>
+        <button class="btn-dark" id="btn-reset">Restaurar Todo</button>
+      </div>
+    </div>
+
+    <!-- COLUMNA CENTRAL: BOLILLERO MECÁNICO -->
+    <div class="arena-column">
+      
+      <div class="bolillero-container" id="cage-drag-area">
+        <div class="bolillero-stand"></div>
+        <div class="bolillero-glass">
+          <canvas id="bolillero-canvas"></canvas>
+          <div id="puerta"></div>
+        </div>
+        <div class="bolillero-base"></div>
+      </div>
+
+      <button class="btn-draw" id="btn-sortear">SORTEAR</button>
+
+      <div class="resultados-container">
+        <div class="resultados" id="resultados"></div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: REGISTRO DE AUDITORÍA -->
+    <div class="gala-panel">
+      <div class="panel-header">
+        <span>Auditoría de Sorteo</span>
+        <span class="panel-status" style="color: var(--gold-primary)">● ACTIVO</span>
+      </div>
+      <div class="audit-box" id="terminal">
+        [AUDIT] Sistema de sorteo inicializado...<br>
+        [AUDIT] Esperando ajustes de rango de bolillas.<br>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); display:flex; justify-content:space-between; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 8px;">
+        <span>Parámetros:</span>
+        <span id="statusRango" style="color: var(--gold-primary); font-weight: 600;">Sin rango</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PANTALLA GALA DE BOLILLA EXTRACTADA -->
+  <div class="epic-draw-overlay" id="epic-overlay">
+    <div class="epic-ball-display" id="epic-ball">
+      <span class="epic-ball-num" id="epic-num">??</span>
+    </div>
+    <div class="epic-ball-title" id="epic-title">Primer Premio</div>
+  </div>
+
+  <!-- MODAL DE CONTROL DE ACCESO -->
+  <div class="modal-overlay" id="modal-auth">
+    <div class="modal">
+      <h3>Security Check</h3>
+      <p>Introduzca la credencial de supervisor para anular o fijar destinos.</p>
+      <input type="password" id="admin-pass" placeholder="••••">
+      <div class="modal-buttons">
+        <button class="btn-dark" id="btn-cancel-auth">Cancelar</button>
+        <button class="btn-gold" id="btn-confirm-auth">Autenticar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DINÁMICO ASIGNAR GANADORES -->
+  <div class="modal-overlay" id="modal-admin">
+    <div class="modal">
+      <h3>Asignación Manual de Premios</h3>
+      <p>Configure los números oficiales de salida aprobados:</p>
+      
+      <!-- Contenedor dinámico de casillas forzadas -->
+      <div class="admin-winners-inputs" id="admin-inputs-container"></div>
+      
+      <div class="modal-buttons" style="margin-top: 10px;">
+        <button class="btn-dark" id="btn-close-admin">Cerrar</button>
+        <button class="btn-gold" id="btn-apply-admin">Inyectar Valores</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    // --- ESTADO GLOBAL ---
+    let cantidadPremios = Number(localStorage.getItem("premium_cantidad")) || 3;
+    let listaRango = JSON.parse(localStorage.getItem("bolas_epico"));
+    
+    if (!listaRango || listaRango.length === 0) {
+      listaRango = [];
+      for (let i = 1; i <= 99; i++) {
+        listaRango.push(i);
+      }
+    }
+
+    let numerosFijos = JSON.parse(localStorage.getItem("premium_fijos"));
+    if (!numerosFijos || nuevosFijosLengthErrorCheck()) {
+      resetFijosDefault();
+    }
+
+    function nuevosFijosLengthErrorCheck() {
+      return !numerosFijos || numerosFijos.length !== cantidadPremios;
+    }
+
+    function resetFijosDefault() {
+      numerosFijos = [];
+      for (let i = 0; i < cantidadPremios; i++) {
+        numerosFijos.push(listaRango[Math.min(listaRango.length - 1 - i * 5, listaRango.length - 1)] || (10 + i * 10));
+      }
+    }
+
+    let sorteando = false;
+    let audioCtx = null;
+    let lastBounceTime = 0; 
+
+    // --- ELEMENTOS DEL DOM ---
+    const logo = document.getElementById("logo");
+    const btnGuardar = document.getElementById("btn-guardar");
+    const btnReset = document.getElementById("btn-reset");
+    const btnSortear = document.getElementById("btn-sortear");
+    const desdeInput = document.getElementById("desde");
+    const hastaInput = document.getElementById("hasta");
+    const cantPremiosInput = document.getElementById("cant-premios");
+    const statusRango = document.getElementById("statusRango");
+    const puerta = document.getElementById("puerta");
+    const resultadosDiv = document.getElementById("resultados");
+    const terminal = document.getElementById("terminal");
+    const cageArea = document.getElementById("cage-drag-area");
+    const fullscreenBtn = document.getElementById("fullscreen-btn");
+    
+    const epicOverlay = document.getElementById("epic-overlay");
+    const epicBall = document.getElementById("epic-ball");
+    const epicNum = document.getElementById("epic-num");
+    const epicTitle = document.getElementById("epic-title");
+    
+    const modalAuth = document.getElementById("modal-auth");
+    const modalAdmin = document.getElementById("modal-admin");
+    const adminPassInput = document.getElementById("admin-pass");
+    const btnCancelAuth = document.getElementById("btn-cancel-auth");
+    const btnConfirmAuth = document.getElementById("btn-confirm-auth");
+    const btnCloseAdmin = document.getElementById("btn-close-admin");
+    const btnApplyAdmin = document.getElementById("btn-apply-admin");
+    const adminInputsContainer = document.getElementById("admin-inputs-container");
+
+    const canvas = document.getElementById("bolillero-canvas");
+    const ctx = canvas.getContext("2d");
+    const confettiCanvas = document.getElementById("confetti-canvas");
+    const confettiCtx = confettiCanvas.getContext("2d");
+
+    cantPremiosInput.value = cantidadPremios;
+
+    // --- MANEJO DE PANTALLA COMPLETA ---
+    fullscreenBtn.addEventListener("click", () => {
+      initAudio();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          fullscreenBtn.innerText = "Salir de Pantalla";
+          setTimeout(resizeCanvas, 150);
+        }).catch(err => {
+          showToast("No se pudo activar la pantalla completa automáticamente.", "error");
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          fullscreenBtn.innerText = "Pantalla Completa";
+          setTimeout(resizeCanvas, 150);
+        });
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        fullscreenBtn.innerText = "Pantalla Completa";
+      } else {
+        fullscreenBtn.innerText = "Salir de Pantalla";
+      }
+      setTimeout(resizeCanvas, 150);
+    });
+
+    // --- LOGS DE AUDITORÍA ---
+    function logToTerminal(message, type = "info") {
+      const time = new Date().toLocaleTimeString().split(' ')[0];
+      let col = "#f3f4f6";
+      if (type === "warn") col = "#d4af37";
+      if (type === "err") col = "#ef4444";
+      if (type === "prize") col = "#ffd700";
+      
+      terminal.innerHTML += `<span style="color: ${col}">[${time}] ${message}</span><br>`;
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // --- SINTETIZADOR DE AUDIO ---
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+    }
+
+    function unlockAudio() {
+      initAudio();
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    }
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+
+    function playChime(freq, duration, vol = 0.08) {
+      if (!audioCtx || audioCtx.state === 'suspended') return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const oscHarmonic = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        oscHarmonic.type = 'sine';
+        oscHarmonic.frequency.setValueAtTime(freq * 2, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        
+        osc.connect(gain);
+        oscHarmonic.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        oscHarmonic.start();
+        osc.stop(audioCtx.currentTime + duration);
+        oscHarmonic.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playBounceSound(vel) {
+      const now = Date.now();
+      if (now - lastBounceTime < 75) return;
+      
+      const tone = 350 + Math.min(vel * 40, 700);
+      playChime(tone, 0.08, 0.010 * Math.min(vel, 1.2));
+      lastBounceTime = now;
+    }
+
+    function playExtraccionSound() {
+      if (!audioCtx || audioCtx.state === 'suspended') return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {}
+    }
+
+    function playWinnerHarp(isGold) {
+      const base = isGold ? 329.63 : 261.63;
+      const intervals = [1, 1.25, 1.5, 1.875, 2, 2.5, 3]; 
+      intervals.forEach((mult, index) => {
+        setTimeout(() => {
+          playChime(base * mult, 1.0, 0.05);
+        }, index * 80);
+      });
+    }
+
+    function playFinalGrandChime() {
+      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+      notes.forEach((f, idx) => {
+        setTimeout(() => {
+          playChime(f, 1.8, 0.05);
+        }, idx * 180);
+      });
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerText = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add("active"), 10);
+      setTimeout(() => {
+        toast.classList.remove("active");
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // --- FÍSICA Y REBOTE DE BOLITAS ---
+    let balls = [];
+    let sparkles = []; 
+    let isSpinning = false;
+    let spinIntensity = 2.0; // Cambiado el valor inicial de centrifugado a 2.0
+    let dragForceX = 0;
+    let dragForceY = 0;
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    class Sparkle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 4;
+        this.vy = (Math.random() - 0.5) * 4;
+        this.size = Math.random() * 2 + 1;
+        this.color = color;
+        this.life = 1.0;
+        this.decay = Math.random() * 0.04 + 0.02;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.05;
+        this.life -= this.decay;
+      }
+      draw(cContext) {
+        cContext.save();
+        cContext.globalAlpha = this.life;
+        cContext.fillStyle = this.color;
+        cContext.beginPath();
+        cContext.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        cContext.fill();
+        cContext.restore();
+      }
+    }
+
+    class Ball {
+      constructor(x, y, radius, color, number = '') {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 6;
+        this.vy = (Math.random() - 0.5) * 6;
+        this.radius = radius;
+        this.color = color;
+        this.number = number;
+        this.isExiting = false;
+        this.exitProgress = 0;
+      }
+
+      update(width, height) {
+        if (this.isExiting) {
+          const targetX = width / 2;
+          const targetY = height - 10;
+          this.x += (targetX - this.x) * 0.12;
+          this.y += (targetY - this.y) * 0.12;
+          this.exitProgress += 0.025;
+          return;
+        }
+
+        if (isSpinning) {
+          const centerX = width / 2;
+          const centerY = height / 2;
+          const dx = this.x - centerX;
+          const dy = this.y - centerY;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+          
+          const force = 0.18 * spinIntensity;
+          this.vx += (-dy / dist) * force + (Math.random() - 0.5) * 2;
+          this.vy += (dx / dist) * force + (Math.random() - 0.5) * 2;
+        }
+
+        if (isDragging) {
+          this.vx += dragForceX * 0.04;
+          this.vy += dragForceY * 0.04;
+        }
+
+        // CAMBIO DE GRAVEDAD POTENCIADA A 0.28
+        this.vy += 0.28;
+        this.vx *= 0.985;
+        this.vy *= 0.985;
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const limitRadius = (width / 2) - this.radius - 8;
+        const dx = this.x - centerX;
+        const dy = this.y - centerY;
+        const distance = Math.sqrt(dx*dx + dy*dy) || 1;
+
+        if (distance > limitRadius) {
+          const angle = Math.atan2(dy, dx);
+          this.x = centerX + limitRadius * Math.cos(angle);
+          this.y = centerY + limitRadius * Math.sin(angle);
+
+          const nx = Math.cos(angle);
+          const ny = Math.sin(angle);
+          const dot = this.vx * nx + this.vy * ny;
+          
+          // CAMBIO DE COEFICIENTE DE REBOTE POTENCIADO A 0.78
+          this.vx = (this.vx - 2 * dot * nx) * 0.78;
+          this.vy = (this.vy - 2 * dot * ny) * 0.78;
+
+          const totalVel = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
+          if (totalVel > 1.5) {
+            playBounceSound(totalVel);
+            if (Math.random() < 0.3) {
+              const sparkX = centerX + (limitRadius + this.radius) * Math.cos(angle);
+              const sparkY = centerY + (limitRadius + this.radius) * Math.sin(angle);
+              sparkles.push(new Sparkle(sparkX, sparkY, "rgba(212, 175, 55, 0.7)"));
+            }
+          }
+        }
+      }
+
+      draw(cContext) {
+        cContext.save();
+        
+        const radGrad = cContext.createRadialGradient(
+          this.x - this.radius*0.35, this.y - this.radius*0.35, this.radius*0.08,
+          this.x, this.y, this.radius
+        );
+        
+        if (this.color === 'gold') {
+          radGrad.addColorStop(0, '#fffdf0');
+          radGrad.addColorStop(0.4, '#d4af37');
+          radGrad.addColorStop(1, '#5c4302');
+        } else if (this.color === 'silver') {
+          radGrad.addColorStop(0, '#ffffff');
+          radGrad.addColorStop(0.4, '#b0b0b0');
+          radGrad.addColorStop(1, '#3b3b3b');
+        } else {
+          radGrad.addColorStop(0, '#ffffff');
+          radGrad.addColorStop(0.6, '#eae1cd');
+          radGrad.addColorStop(1, '#7a705b');
+        }
+
+        cContext.beginPath();
+        cContext.arc(this.x, this.y, this.radius * (1 - this.exitProgress * 0.5), 0, Math.PI * 2);
+        cContext.fillStyle = radGrad;
+        cContext.fill();
+
+        if (this.number !== '' && this.exitProgress < 0.85) {
+          cContext.fillStyle = '#1c1a16';
+          
+          const numStr = String(this.number);
+          let fontSize = this.radius * 0.85;
+          
+          if (numStr.length === 3) {
+            fontSize = this.radius * 0.65;
+          } else if (numStr.length === 4) {
+            fontSize = this.radius * 0.50;
+          } else if (numStr.length >= 5) {
+            fontSize = this.radius * 0.40;
+          }
+
+          cContext.font = `bold ${Math.round(fontSize)}px 'Cinzel', serif`;
+          cContext.textAlign = 'center';
+          cContext.textBaseline = 'middle';
+          cContext.fillText(numStr, this.x, this.y + 0.5);
+        }
+        cContext.restore();
+      }
+    }
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+
+    // --- LLUVIA DE HOJAS METÁLICAS ---
+    let confettiParticles = [];
+    let confettiActive = false;
+
+    class GoldLeaf {
+      constructor() {
+        this.x = Math.random() * confettiCanvas.width;
+        this.y = Math.random() * -confettiCanvas.height - 20;
+        this.sizeW = Math.random() * 12 + 8;
+        this.sizeH = Math.random() * 6 + 4;
+        this.color = Math.random() > 0.4 ? '#d4af37' : '#e5e7eb';
+        this.speedX = Math.random() * 1.5 - 0.75;
+        this.speedY = Math.random() * 2 + 1.2;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 2 - 1;
+      }
+      update() {
+        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.5;
+        this.y += this.speedY;
+        this.rotation += this.rotationSpeed;
+        if (this.y > confettiCanvas.height) {
+          this.y = -20;
+          this.x = Math.random() * confettiCanvas.width;
+        }
+      }
+      draw() {
+        confettiCtx.save();
+        confettiCtx.translate(this.x, this.y);
+        confettiCtx.rotate(this.rotation * Math.PI / 180);
+        confettiCtx.fillStyle = this.color;
+        confettiCtx.shadowBlur = 4;
+        confettiCtx.shadowColor = this.color;
+        confettiCtx.beginPath();
+        confettiCtx.ellipse(0, 0, this.sizeW/2, this.sizeH/2, 0, 0, Math.PI * 2);
+        confettiCtx.fill();
+        confettiCtx.restore();
+      }
+    }
+
+    function resizeConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+
+    // CANTIDAD DE BOLILLAS INTELIGENTE Y FIJACIÓN DE TAMAÑO EN 11
+    function initBolillero() {
+      resizeCanvas();
+      balls = [];
+      sparkles = [];
+      
+      // FIJACIÓN DE TAMAÑO VISUAL SELLADO EN 11 EN EL CANVAS
+      const r = 11;
+      
+      // CANTIDAD INTELIGENTE: Si el rango es chico mete pocas bolillas, pero si el rango es gigante,
+      // se clava de forma automática en un tope estético de 40 bolillas.
+      const totalBolillasVisuales = Math.min(listaRango.length, 40); 
+      const poolMezclado = [...listaRango].sort(() => Math.random() - 0.5);
+      
+      for (let i = 0; i < totalBolillasVisuales; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * (canvas.width / 2 - r - 25);
+        const x = canvas.width / 2 + dist * Math.cos(angle);
+        const y = canvas.height / 2 + dist * Math.sin(angle);
+        
+        balls.push(new Ball(x, y, r, 'ivory', poolMezclado[i]));
+      }
+    }
+
+    cageArea.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      lastX = e.clientX - rect.left;
+      lastY = e.clientY - rect.top;
+      initAudio();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const currentX = e.clientX - rect.left;
+      const currentY = e.clientY - rect.top;
+      dragForceX = currentX - lastX;
+      dragForceY = currentY - lastY;
+      lastX = currentX;
+      lastY = currentY;
+
+      if (Math.abs(dragForceX) > 1.5 && Math.random() < 0.15) {
+        initAudio();
+        playChime(250 + Math.abs(dragForceX)*5, 0.08, 0.012);
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      dragForceX = 0;
+      dragForceY = 0;
+    });
+
+    cageArea.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      lastX = e.touches[0].clientX - rect.left;
+      lastY = e.touches[0].clientY - rect.top;
+      initAudio();
+    }, {passive: true});
+
+    cageArea.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const currentX = e.touches[0].clientX - rect.left;
+      const currentY = e.touches[0].clientY - rect.top;
+      dragForceX = currentX - lastX;
+      dragForceY = currentY - lastY;
+      lastX = currentX;
+      lastY = currentY;
+    }, {passive: true});
+
+    cageArea.addEventListener('touchend', () => { isDragging = false; });
+
+    function resolveCollisions() {
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          const b1 = balls[i];
+          const b2 = balls[j];
+          if (b1.isExiting || b2.isExiting) continue;
+
+          const dx = b2.x - b1.x;
+          const dy = b2.y - b1.y;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+          const minDist = b1.radius + b2.radius;
+
+          if (dist < minDist) {
+            const angle = Math.atan2(dy, dx);
+            const targetX = b1.x + minDist * Math.cos(angle);
+            const targetY = b1.y + minDist * Math.sin(angle);
+            const ax = (targetX - b2.x) * 0.5;
+            const ay = (targetY - b2.y) * 0.5;
+
+            b1.x -= ax;
+            b1.y -= ay;
+            b2.x += ax;
+            b2.y += ay;
+
+            // EL CHOQUE INTERNO TAMBIÉN SE ADAPTA AL CAOS DE MOVIMIENTO RECALIBRADO
+            const tempVx = b1.vx;
+            const tempVy = b1.vy;
+            b1.vx = b2.vx * 0.85;
+            b1.vy = b2.vy * 0.85;
+            b2.vx = tempVx * 0.85;
+            b2.vy = tempVy * 0.85;
+          }
+        }
+      }
+    }
+
+    function animLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      resolveCollisions();
+
+      sparkles.forEach((sp, idx) => {
+        sp.update();
+        sp.draw(ctx);
+        if (sp.life <= 0) sparkles.splice(idx, 1);
+      });
+
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const b = balls[i];
+        b.update(canvas.width, canvas.height);
+        b.draw(ctx);
+        if (b.isExiting && b.exitProgress >= 1) {
+          balls.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animLoop);
+    }
+
+    function startConfetti() {
+      resizeConfetti();
+      confettiParticles = [];
+      for (let i = 0; i < 70; i++) {
+        confettiParticles.push(new GoldLeaf());
+      }
+      confettiActive = true;
+    }
+
+    function stopConfetti() {
+      confettiActive = false;
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+
+    function confettiLoop() {
+      if (!confettiActive) return;
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiParticles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(confettiLoop);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      if (confettiActive) resizeConfetti();
+    });
+
+    // --- ACCIONES DE JUEGO ---
+    function renderRangoUI() {
+      if (listaRango.length > 0) {
+        statusRango.innerText = `${listaRango[0]} a ${listaRango[listaRango.length-1]} (${listaRango.length} números)`;
+        statusRango.style.color = 'var(--gold-primary)';
+      } else {
+        statusRango.innerText = 'Sin rango';
+        statusRango.style.color = 'var(--text-muted)';
+      }
+    }
+
+    btnGuardar.addEventListener('click', () => {
+      initAudio();
+      const d = Number(desdeInput.value);
+      const h = Number(hastaInput.value);
+      const cant = Number(cantPremiosInput.value);
+
+      if (isNaN(d) || isNaN(h) || d >= h || d < 1) {
+        showToast("Rango de bolillas inválido.", "error");
+        logToTerminal("ERROR: Rango incorrecto ingresado.", "err");
+        return;
+      }
+
+      if (isNaN(cant) || cant < 1 || cant > 5) {
+        showToast("La cantidad de premios debe ser entre 1 y 5.", "error");
+        return;
+      }
+
+      cantidadPremios = cant;
+      localStorage.setItem("premium_cantidad", cantidadPremios);
+
+      if (numerosFijos.length !== cantidadPremios) {
+        numerosFijos = [];
+        for (let i = 0; i < cantidadPremios; i++) {
+          numerosFijos.push(listaRango[i] || (10 + i * 10)); 
+        }
+        localStorage.setItem("premium_fijos", JSON.stringify(numerosFijos));
+      }
+
+      listaRango = [];
+      for (let i = d; i <= h; i++) {
+        listaRango.push(i);
+      }
+      localStorage.setItem("premium_desde", d);
+      localStorage.setItem("premium_hasta", h);
+      localStorage.setItem("bolas_epico", JSON.stringify(listaRango));
+      
+      renderRangoUI();
+      initBolillero();
+      
+      playChime(523.25, 0.4, 0.05);
+      showToast("Configuración guardada oficialmente.", "success");
+      logToTerminal(`[SIS] Rango de sorteo: ${d} a ${h}. Premios totales: ${cantidadPremios}`);
+    });
+
+    btnReset.addEventListener('click', () => {
+      initAudio();
+      localStorage.removeItem("premium_desde");
+      localStorage.removeItem("premium_hasta");
+      localStorage.removeItem("premium_cantidad");
+      localStorage.removeItem("premium_fijos");
+      localStorage.removeItem("bolas_epico");
+      
+      listaRango = [];
+      for (let i = 1; i <= 99; i++) {
+        listaRango.push(i);
+      }
+      desdeInput.value = 1;
+      hastaInput.value = 99;
+      cantPremiosInput.value = 3;
+      cantidadPremios = 3;
+      numerosFijos = [30, 20, 10];
+      
+      renderRangoUI();
+      initBolillero();
+      resultadosDiv.innerHTML = "";
+      stopConfetti();
+      playChime(261.63, 0.5, 0.05);
+      showToast("Parámetros del bolillero restaurados.");
+      logToTerminal("[SIS] Restauración general del sistema de sorteo completada.", "warn");
+    });
+
+    // --- EXTRACCIÓN GALA PREMIUM ---
+    function sortear() {
+      if (listaRango.length === 0) {
+        showToast("Fije el rango de números primero.", "error");
+        return;
+      }
+      if (sorteando) return;
+
+      initAudio();
+      sorteando = true;
+      stopConfetti();
+      resultadosDiv.innerHTML = "";
+      isSpinning = true;
+      
+      // CENTRIFUGADO CON TURBO: Arranca con una fuerza inicial de 2.0
+      spinIntensity = 2.0;
+      
+      logToTerminal("[SIS] Iniciando centrifugado neumático en el bolillero central...");
+      showToast("Bolillero en movimiento.", "info");
+
+      // ACELERACIÓN TURBO MÁXIMA: Escalado rápido hasta un tope de fuerza de 7.0
+      let accel = setInterval(() => {
+        spinIntensity += 1.2;
+        if (spinIntensity > 7.0) {
+          spinIntensity = 7.0;
+          clearInterval(accel);
+        }
+      }, 120);
+
+      const premios = [];
+      for (let i = 0; i < cantidadPremios; i++) {
+        const esUltimo = (i === cantidadPremios - 1);
+        const esSegundo = (i === cantidadPremios - 2);
+        
+        let tag = `${cantidadPremios - i}° Premio`;
+        if (esUltimo) tag = "Primer Premio";
+        if (esSegundo && cantidadPremios > 1) tag = "Segundo Premio";
+
+        premios.push({
+          label: tag,
+          num: numerosFijos[i] || 7,
+          color: esUltimo ? 'gold' : (esSegundo ? 'silver' : 'ivory'),
+          isGold: esUltimo,
+          isSilver: esSegundo && !esUltimo
+        });
+      }
+
+      premios.forEach((premio, index) => {
+        const drawDelay = 3500 + (index * 5500);
+        
+        setTimeout(() => {
+          puerta.classList.add("puerta-abierta");
+          playExtraccionSound();
+
+          setTimeout(() => {
+            // La bolilla física que sale mantiene su proporcionalidad limpia
+            const outBall = new Ball(
+              canvas.width / 2, 
+              canvas.height / 2 + 35, 
+              15, 
+              premio.color, 
+              premio.num
+            );
+            outBall.isExiting = true;
+            balls.push(outBall);
+
+            logToTerminal(`[PROCESO] Extrayendo ${premio.label}...`, "warn");
+
+            setTimeout(() => {
+              puerta.classList.remove("puerta-abierta");
+
+              const numStr = String(premio.num);
+              epicNum.innerText = numStr;
+              epicTitle.innerText = premio.label;
+              epicBall.className = `epic-ball-display ${premio.color}`;
+              
+              // Escalado adaptativo tipográfico en la superbolilla gigante de gala
+              if (numStr.length <= 2) {
+                epicNum.style.fontSize = "5.5rem";
+              } else if (numStr.length === 3) {
+                epicNum.style.fontSize = "4.2rem";
+              } else if (numStr.length === 4) {
+                epicNum.style.fontSize = "3.2rem";
+              } else if (numStr.length === 5) {
+                epicNum.style.fontSize = "2.5rem";
+              } else {
+                epicNum.style.fontSize = "2.0rem";
+              }
+
+              epicOverlay.classList.add("active");
+              playWinnerHarp(premio.isGold);
+
+              let epicSparks = setInterval(() => {
+                const rect = epicBall.getBoundingClientRect();
+                const sx = rect.left + rect.width / 2 + (Math.random() - 0.5) * 120;
+                const sy = rect.top + rect.height / 2 + (Math.random() - 0.5) * 120;
+                sparkles.push(new Sparkle(sx - canvas.getBoundingClientRect().left, sy - canvas.getBoundingClientRect().top, premio.isGold ? "#ffd700" : "#ffffff"));
+              }, 60);
+
+              setTimeout(() => {
+                clearInterval(epicSparks);
+                epicOverlay.classList.remove("active");
+
+                let cardFontSize = "2rem"; 
+                if (numStr.length === 3) cardFontSize = "1.6rem";
+                else if (numStr.length === 4) cardFontSize = "1.25rem";
+                else if (numStr.length >= 5) cardFontSize = "1.0rem";
+
+                const card = document.createElement("div");
+                card.className = `resultado-card ${premio.isGold ? 'tier-1' : (premio.isSilver ? 'tier-2' : '')}`;
+                card.innerHTML = `
+                  <div class="resultado-label">${premio.label}</div>
+                  <div class="resultado-num" style="font-size: ${cardFontSize}">${premio.num}</div>
+                `;
+                resultadosDiv.appendChild(card);
+                logToTerminal(`[EXCLUSIVO] ${premio.label} adjudicado a la Bolilla #${premio.num}`, "prize");
+
+                if (index === premios.length - 1) {
+                  setTimeout(() => {
+                    isSpinning = false;
+                    sorteando = false;
+                    
+                    startConfetti();
+                    confettiLoop();
+                    playFinalGrandChime();
+                    
+                    logToTerminal("[AUDIT] Sorteo concluido bajo normativas oficiales.", "prize");
+                    showToast("🏆 ¡Sorteo de Clau Fichitas Finalizado!", "success");
+                  }, 1200);
+                }
+
+              }, 2800);
+
+            }, 700);
+
+          }, 400);
+
+        }, drawDelay);
+      });
+    }
+
+    btnSortear.addEventListener('click', sortear);
+
+    // --- ACCESO DE ADMINISTRACIÓN ---
+    logo.addEventListener('dblclick', () => {
+      initAudio();
+      adminPassInput.value = "";
+      modalAuth.classList.add("active");
+    });
+
+    btnCancelAuth.addEventListener('click', () => { modalAuth.classList.remove("active"); });
+
+    btnConfirmAuth.addEventListener('click', () => {
+      if (adminPassInput.value === "cacatua12") {
+        modalAuth.classList.remove("active");
+        
+        adminInputsContainer.innerHTML = "";
+        
+        for (let i = 0; i < cantidadPremios; i++) {
+          const esUltimo = (i === cantidadPremios - 1);
+          const esSegundo = (i === cantidadPremios - 2);
+          
+          let tag = `${cantidadPremios - i}° Premio`;
+          if (esUltimo) tag = "1° Premio";
+          if (esSegundo && cantidadPremios > 1) tag = "2° Premio";
+
+          const divBox = document.createElement("div");
+          if (esUltimo) divBox.style.transform = "scale(1.05)";
+          
+          divBox.innerHTML = `
+            <span style="font-size:0.7rem; color:${esUltimo ? 'var(--gold-primary)' : 'var(--text-muted)'}; font-weight:${esUltimo ? 'bold' : 'normal'};">${tag}</span>
+            <input type="number" class="fijo-input-dinamico" data-index="${i}" value="${numerosFijos[i] || ''}" style="${esUltimo ? 'border-color: var(--gold-primary)' : ''}">
+          `;
+          adminInputsContainer.appendChild(divBox);
+        }
+
+        modalAdmin.classList.add("active");
+        showToast("Configuración interna de precisión disponible.", "success");
+      } else {
+        showToast("Contraseña incorrecta.", "error");
+        playChime(140, 0.4, 0.1);
+      }
+    });
+
+    btnCloseAdmin.addEventListener('click', () => { modalAdmin.classList.remove("active"); });
+
+    btnApplyAdmin.addEventListener('click', () => {
+      const inputsDinamicos = document.querySelectorAll(".fijo-input-dinamico");
+      let nuevosFijos = new Array(cantidadPremios);
+      let valid = true;
+
+      inputsDinamicos.forEach(input => {
+        const idx = Number(input.getAttribute("data-index"));
+        const val = Number(input.value);
+        if (!val) {
+          valid = false;
+        }
+        nuevosFijos[idx] = val;
+      });
+
+      if (!valid) {
+        showToast("Complete todos los campos requeridos.", "error");
+        return;
+      }
+
+      numerosFijos = nuevosFijos;
+      localStorage.setItem("premium_fijos", JSON.stringify(numerosFijos));
+      
+      modalAdmin.classList.remove("active");
+      showToast("Configuración reprogramada con éxito.", "success");
+      
+      playChime(550, 0.2, 0.05);
+    });
+
+    window.onload = () => {
+      const prevDesde = localStorage.getItem("premium_desde");
+      const prevHasta = localStorage.getItem("premium_hasta");
+      if (prevDesde && prevHasta) {
+        desdeInput.value = prevDesde;
+        hastaInput.value = prevHasta;
+      }
+      renderRangoUI();
+      initBolillero();
+      animLoop();
+    };
+  </script>
+</body>
+</html>
